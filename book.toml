@@ -1,7 +1,0 @@
-[book]
-title = "设计模式随笔"
-authors = ["Ailrid"]
-language = "zh-CN"
-
-[preprocessor.katex]
-after = ["links"]

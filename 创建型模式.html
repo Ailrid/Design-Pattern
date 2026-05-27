@@ -1,0 +1,991 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>创建型模式 - 设计模式随笔</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-e7be2b06.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-bd8de604.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">设计模式随笔</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="创建型设计模式"><a class="header" href="#创建型设计模式">创建型设计模式</a></h1>
+<h2 id="1-abstract-factory"><a class="header" href="#1-abstract-factory">1: Abstract Factory</a></h2>
+<h3 id="一句话总结"><a class="header" href="#一句话总结">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**对于本质相同，但表现形式不同的事物，采用同一个接口间接创建，而不是直接在代码中创建。</p>
+</li>
+<li>
+<p><strong>优点：</strong> <strong>动态切换</strong>不同表现的时候，不需要改动创建时候的代码。</p>
+</li>
+</ul>
+<h3 id="oop写法"><a class="header" href="#oop写法">OOP写法</a></h3>
+<p>第一步：定义抽象接口(对应于上文的本质)</p>
+<pre><code class="language-ts">// 抽象产品 A
+interface Button {
+    paint(): void;
+}
+
+// 抽象产品 B
+interface TextField {
+    display(): void;
+}
+</code></pre>
+<p>第二步：定义不同的实现(对应于上文的表现)</p>
+<pre><code class="language-ts">// Windows 家族的具体产品
+class WindowsButton implements Button {
+    public paint(): void { 
+        console.log("渲染 Windows 风格按钮"); 
+    }
+}
+
+class WindowsTextField implements TextField {
+    public display(): void { 
+        console.log("显示 Windows 风格文本框"); 
+    }
+}
+
+// Mac 家族的具体产品
+class MacButton implements Button {
+    public paint(): void { 
+        console.log("渲染 Mac 风格按钮"); 
+    }
+}
+
+class MacTextField implements TextField {
+    public display(): void { 
+        console.log("显示 Mac 风格文本框"); 
+    }
+}
+</code></pre>
+<p>第三步：定义同一个创建接口</p>
+<pre><code class="language-ts">// 统一的工厂契约
+interface GUIFactory {
+    createButton(): Button;       // 工厂方法 A
+    createTextField(): TextField; // 工厂方法 B
+}
+
+// Windows 工厂：只打包生产 Windows 系列组件
+class WindowsFactory implements GUIFactory {
+    public createButton(): Button { 
+        return new WindowsButton(); 
+    }
+    public createTextField(): TextField { 
+        return new WindowsTextField(); 
+    }
+}
+
+// Mac 工厂：只打包生产 Mac 系列组件
+class MacFactory implements GUIFactory {
+    public createButton(): Button { 
+        return new MacButton(); 
+    }
+    public createTextField(): TextField { 
+        return new MacTextField(); 
+    }
+}
+</code></pre>
+<p>使用方法：</p>
+<pre><code class="language-ts">class Application {
+    private button: Button;
+    private textField: TextField;
+
+    // 客户端只接受抽象的 GUIFactory，具体传入什么工厂它不关心
+    constructor(factory: GUIFactory) {
+        this.button = factory.createButton();
+        this.textField = factory.createTextField();
+    }
+
+    public run(): void {
+        this.button.paint();
+        this.textField.display();
+    }
+}
+
+// === 测试运行 ===
+
+// 想要 Windows 风格，就注入 Windows 工厂
+const winApp = new Application(new WindowsFactory());
+winApp.run(); 
+// 输出: 
+// 渲染 Windows 风格按钮
+// 显示 Windows 风格文本框
+
+// 想要切换表现时，客户端（Application）核心代码完全不需要改动，只需要改动注入的具体工厂
+const macApp = new Application(new MacFactory());
+macApp.run();
+// 输出:
+// 渲染 Mac 风格按钮
+// 显示 Mac 风格文本框
+</code></pre>
+<h3 id="现代写法"><a class="header" href="#现代写法">现代写法</a></h3>
+<p>非OOP语言中，根本不需要这么麻烦，也不需要利用OOP的多态，使用泛型约束能够更好的控制类型。</p>
+<p>第一步：定义抽象接口</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 抽象产品 A
+pub trait Button {
+    fn paint(&amp;self);
+}
+
+// 抽象产品 B
+pub trait TextField {
+    fn display(&amp;self);
+}
+<span class="boring">}</span></code></pre>
+<p>第二步：定义不同的实现</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// --- Windows 家族的具体产品 ---
+pub struct WindowsButton;
+impl Button for WindowsButton {
+    fn paint(&amp;self) {
+        println!("渲染 Windows 风格按钮");
+    }
+}
+
+pub struct WindowsTextField;
+impl TextField for WindowsTextField {
+    fn display(&amp;self) {
+        println!("显示 Windows 风格文本框");
+    }
+}
+
+// --- Mac 家族的具体产品 ---
+pub struct MacButton;
+impl Button for MacButton {
+    fn paint(&amp;self) {
+        println!("渲染 Mac 风格按钮");
+    }
+}
+
+pub struct MacTextField;
+impl TextField for MacTextField {
+    fn display(&amp;self) {
+        println!("显示 Mac 风格文本框");
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>第三步：定义同一个创建接口</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 统一的工厂契约
+pub trait GUIFactory {
+    // 关联类型：规定了该工厂生产的具体产品类型，它们必须实现对应的 Trait
+    type B: Button;
+    type T: TextField;
+
+    fn create_button(&amp;self) -&gt; Self::B;
+    fn create_text_field(&amp;self) -&gt; Self::T;
+}
+
+// --- Windows 工厂 ---
+pub struct WindowsFactory;
+impl GUIFactory for WindowsFactory {
+    type B = WindowsButton; // 锁定产品类型
+    type T = WindowsTextField;
+
+    fn create_button(&amp;self) -&gt; Self::B { WindowsButton }
+    fn create_text_field(&amp;self) -&gt; Self::T { WindowsTextField }
+}
+
+// --- Mac 工厂 ---
+pub struct MacFactory;
+impl GUIFactory for MacFactory {
+    type B = MacButton;    // 锁定产品类型
+    type T = MacTextField;
+
+    fn create_button(&amp;self) -&gt; Self::B { MacButton }
+    fn create_text_field(&amp;self) -&gt; Self::T { MacTextField }
+}
+<span class="boring">}</span></code></pre>
+<p>使用方法：</p>
+<pre class="playground"><code class="language-rust">// 客户端只需要一个泛型 F，只要 F 实现了 GUIFactory 契约就行
+pub struct Application&lt;F: GUIFactory&gt; {
+    button: F::B,
+    text_field: F::T,
+}
+
+impl&lt;F: GUIFactory&gt; Application&lt;F&gt; {
+    // 客户端只接受抽象的工厂，具体传入什么它不关心
+    pub fn new(factory: F) -&gt; Self {
+        Self {
+            button: factory.create_button(),
+            text_field: factory.create_text_field(),
+        }
+    }
+
+    pub fn run(&amp;self) {
+        self.button.paint();
+        self.text_field.display();
+    }
+}
+
+// === 测试运行 ===
+fn main() {
+    // 1. 想要 Windows 风格，就注入 Windows 工厂
+    let win_factory = WindowsFactory;
+    let win_app = Application::new(win_factory);
+    win_app.run();
+
+    // 2. 想要切换表现时，Application 的内部代码一行都不用改
+    let mac_factory = MacFactory;
+    let mac_app = Application::new(mac_factory);
+    mac_app.run();
+}</code></pre>
+<h3 id="回顾思考"><a class="header" href="#回顾思考">回顾思考</a></h3>
+<p>本质其实非常简单，不直接创建对象，而是通过一个类型相同的工厂来创建。</p>
+<p>为什么叫做抽象工厂？一个工厂生产多种产品，这正好对应上面的各种create方法。</p>
+<h2 id="2--factory-method"><a class="header" href="#2--factory-method">2:  Factory Method</a></h2>
+<h3 id="一句话总结-1"><a class="header" href="#一句话总结-1">一句话总结</a></h3>
+<ul>
+<li><strong>本质</strong>：其实和抽象工厂本质一模一样，采用同一个接口间接创建，而不是直接在代码中创建。</li>
+<li><strong>优点</strong>： <strong>动态切换</strong>不同表现的时候，不需要改动创建时候的代码。</li>
+</ul>
+<h3 id="回顾思考-1"><a class="header" href="#回顾思考-1">回顾思考</a></h3>
+<p>其实本质上和抽象工厂没有区别，上面的<code>GUIFactory</code>是抽象工厂，而这个<code>GUIFactory</code>调用的<code>create_button</code>、<code>create_text_field</code>就是工厂方法。</p>
+<p>换句话说，<strong>一个抽象工厂，通过调用每种产品的工厂方法，生成了一个产品</strong>。</p>
+<p>不过设计模式把这两种方式给区分开来了，大抵是认为工厂方法侧重于单一产品的创建，核心是通过定义一个创建对象的接口，让子类决定实例化哪一个类(特点是利用<strong>继承</strong>)。而抽象工厂侧重于产品族，它关注的是对象的<strong>组合</strong>。但是，由于现代语言甚至都不再有OOP了，还需要强调这一点吗？在非 OOP 语言里，<strong>工厂方法和抽象工厂在语法结构上彻底合二为一了</strong>。不需要再去纠结是用继承还是用组合。从这个角度看，现代开发中确实完全没必要死扣这两个概念的字面区别。</p>
+<h2 id="3-builder"><a class="header" href="#3-builder">3: Builder</a></h2>
+<h3 id="一句话总结-2"><a class="header" href="#一句话总结-2">一句话总结</a></h3>
+<ul>
+<li><strong>本质</strong>：把一个复杂对象的创建拆成独立的几部分，每一部分包装成独立的函数。Builder 模式最标志性的特征就是**链式调用，通过每个配置方法返回 <code>this/Self</code> 来实现。</li>
+<li><strong>优点</strong>：使得用户可以独立控制创建过程，根据自己的需要来创建对象。</li>
+</ul>
+<h3 id="现代写法-1"><a class="header" href="#现代写法-1">现代写法</a></h3>
+<p>第一步：定义产品</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug)]
+pub struct Computer {
+    cpu: String,
+    ram: String,
+    storage: String,
+    gpu: Option&lt;String&gt;, // 可选属性
+}
+<span class="boring">}</span></code></pre>
+<p>第二步：写一个Builder</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ComputerBuilder {
+    cpu: Option&lt;String&gt;,
+    ram: Option&lt;String&gt;,
+    storage: Option&lt;String&gt;,
+    gpu: Option&lt;String&gt;,
+}
+
+impl ComputerBuilder {
+    // 初始化空的建造者
+    pub fn new() -&gt; Self {
+        Self {
+            cpu: None,
+            ram: None,
+            storage: None,
+            gpu: None,
+        }
+    }
+
+    // 独立部件包装成独立的函数，利用消费消费并返回 self 的链式调用
+    pub fn cpu(mut self, cpu: &amp;str) -&gt; Self {
+        self.cpu = Some(cpu.to_string());
+        self
+    }
+
+    pub fn ram(mut self, ram: &amp;str) -&gt; Self {
+        self.ram = Some(ram.to_string());
+        self
+    }
+
+    pub fn storage(mut self, storage: &amp;str) -&gt; Self {
+        self.storage = Some(storage.to_string());
+        self
+    }
+
+    pub fn gpu(mut self, gpu: &amp;str) -&gt; Self {
+        self.gpu = Some(gpu.to_string());
+        self
+    }
+
+    // 最终构建
+    pub fn build(self) -&gt; Result&lt;Computer, String&gt; {
+        let cpu = self.cpu.ok_or("缺少 CPU 配置")?;
+        let ram = self.ram.ok_or("缺少 RAM 配置")?;
+        let storage = self.storage.ok_or("缺少存储配置")?;
+
+        Ok(Computer {
+            cpu,
+            ram,
+            storage,
+            gpu: self.gpu,
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>使用方法:</p>
+<pre class="playground"><code class="language-rust">fn main() {
+    // 根据需要独立控制创建过程
+    let my_computer = ComputerBuilder::new()
+        .cpu("AMD R9")
+        .ram("64GB")
+        .storage("4TB")
+        .gpu("RX 7900XTX")
+        .build()
+        .unwrap();
+
+    println!("创建成功: {:?}", my_computer);
+}</code></pre>
+<h3 id="回顾思考-2"><a class="header" href="#回顾思考-2">回顾思考</a></h3>
+<p>在TS开发中，其实很少写 Builder 了，一般都直接利用字面量对象：<code>createComputer({ cpu: 'i9', ram: '32G' })</code>。</p>
+<p><strong>在 Rust 或 Java中，Builder 模式存在的唯一价值，其实是弥补语言本身缺乏“具名参数”和“参数默认值”的缺陷。</strong></p>
+<p>这个模式典型的特点就是<strong>每个Builder的方法应该是独立的，这意味着要修改的那些参数，应该要么都有默认要么是可选的。</strong></p>
+<h2 id="4--prototype"><a class="header" href="#4--prototype">4:  Prototype</a></h2>
+<h3 id="一句话总结-3"><a class="header" href="#一句话总结-3">一句话总结</a></h3>
+<ul>
+<li>
+<p><strong>本质</strong>：不通过构造函数从头创建对象，而是以一个已有对象为“原型”，通过内存复制拷贝出一个一模一样的新对象，然后在基础上修改。</p>
+</li>
+<li>
+<p><strong>优点</strong>：绕过了复杂的构造函数初始化逻辑，大幅提升重量级对象的创建效率(这是一个极其肤浅的优点)。可以实现类型的动态注册与实例化(这才是真正的威力)。</p>
+</li>
+</ul>
+<h3 id="回顾思考-3"><a class="header" href="#回顾思考-3">回顾思考</a></h3>
+<p>这个特别需要注意深浅拷贝的问题，一不留神就会导致出问题。</p>
+<p>利用**这种模式可以实现在程序运行中动态的添加类型和创建对应的实例。**这是什么意思？程序的类型都是编译器写死的，但如果你有一个原型管理器，<strong>每个类型使用字符串来标识</strong>，如果利用现有的类型组合出新的对象，然后添加到管理器中，那么你就相当于有了一个新的类型。之后你要创建一个这个新类型的实例，不是采用构造函数的方式，而是采用<code>clone</code>的方式。</p>
+<p>这种在游戏里非常常见，而且和游戏里的依赖注入使用的一部分技术很像？都是使用一个<code>HashMap</code>来关联字符串和类型。不过DI手里有真正的构造函数和类名，但是这个只是一个实例。</p>
+<p>在现代开发中，我们不再叫它原型模式，也不再直接拷贝，而是为这种结构生成一个配置文件，我们叫它 <strong>“配置驱动”</strong> 或 <strong>“模板”</strong>。</p>
+<h2 id="5--singleton"><a class="header" href="#5--singleton">5:  Singleton</a></h2>
+<h3 id="一句话总结-4"><a class="header" href="#一句话总结-4">一句话总结</a></h3>
+<ul>
+<li>**本质：**保证拿到的对象是单例，不管怎么创建都应该只有一个。</li>
+</ul>
+<h3 id="回顾思考-4"><a class="header" href="#回顾思考-4">回顾思考</a></h3>
+<p>单例控制是否属于创建本身？个人认为这个不应该属于设计模式中的内容。这种需求纯属是面向特定的业务或者任务需求来的。在一般情况下，控制是否是单例不应该由类型本身来决定，<strong>这个权限应该属于创建容器来决定</strong>。</p>
+<hr>
+<h2 id="6-补充对象池"><a class="header" href="#6-补充对象池">6: 补充：对象池</a></h2>
+<h3 id="一句话总结-5"><a class="header" href="#一句话总结-5">一句话总结</a></h3>
+<ul>
+<li><strong>本质：</strong> 预先创建并回收一组相同类型的对象，用借与还代替新建与销毁。</li>
+<li><strong>优点：</strong> 干掉频繁创建/销毁重量级资源带来的内存抖动、高昂耗时与GC压力。</li>
+</ul>
+<h3 id="现代写法-2"><a class="header" href="#现代写法-2">现代写法</a></h3>
+<p>第一步：定义基础产品与对象池结构</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::{Arc, Mutex};
+
+// 模拟重量级资源
+pub struct RawConnection {
+    id: usize,
+}
+
+impl RawConnection {
+    pub fn send(&amp;self, msg: &amp;str) {
+        println!("连接 #{} 发送: {}", self.id, msg);
+    }
+}
+
+// 对象池核心：用 Mutex 保护空闲连接队列
+pub struct ConnectionPool {
+    available: Mutex&lt;Vec&lt;RawConnection&gt;&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>第二步：利用智能指针和 Drop 契约实现自动归还</p>
+<p>关键在于<strong>不直接返回资源本身</strong>，而是返回一个包装了池子引用的代理对象（智能指针）。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 借出去的“代理连接”，用户拿到的其实是这个
+pub struct PooledConnection {
+    // 实际的连接（用 Option 包装，方便拿出来归还）
+    conn: Option&lt;RawConnection&gt;,
+    // 保持对所属对象池的引用，知道该还给谁
+    pool: Arc&lt;ConnectionPool&gt;,
+}
+
+// 为代理连接实现 Deref，让用户用起来和用原始连接一模一样
+impl std::ops::Deref for PooledConnection {
+    type Target = RawConnection;
+    fn deref(&amp;self) -&gt; &amp;Self::Target {
+        self.conn.as_ref().unwrap()
+    }
+}
+
+// 核心：实现 Drop Trait。当这个变量离开作用域时，自动触发归还逻辑！
+impl Drop for PooledConnection {
+    fn drop(&amp;mut self) {
+        if let Some(raw_conn) = self.conn.take() {
+            println!("--- [Modern] 变量离开作用域，底层自动将其还回池中 ---");
+            let mut pool_conns = self.pool.available.lock().unwrap();
+            pool_conns.push(raw_conn);
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>第三步：完善池子的借出方法</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl ConnectionPool {
+    pub fn new(size: usize) -&gt; Arc&lt;Self&gt; {
+        let mut conns = Vec::new();
+        for i in 1..=size {
+            println!("[Modern] 初始化底层资源 #{}", i);
+            conns.push(RawConnection { id: i });
+        }
+        Arc::new(Self {
+            available: Mutex::new(conns),
+        })
+    }
+
+    pub fn acquire(self: &amp;Arc&lt;Self&gt;) -&gt; PooledConnection {
+        let mut pool_conns = self.available.lock().unwrap();
+        let raw_conn = pool_conns.pop().expect("没有可用连接了！");
+        
+        PooledConnection {
+            conn: Some(raw_conn),
+            pool: self.clone(),
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>使用方法：</p>
+<pre class="playground"><code class="language-rust">fn main() {
+    let pool = ConnectionPool::new(2);
+
+    {
+        // 借出连接 1
+        let conn1 = pool.acquire();
+        conn1.send("Hello"); // 借由 Deref 直接调用底层方法
+        
+        let conn2 = pool.acquire();
+        conn2.send("World");
+        
+        // 到了大括号结尾，conn1 和 conn2 离开作用域
+        // 它们身上的 Drop 会自动被调用，悄悄把连接还给 pool
+    } 
+
+    // 此时再借，借到的就是刚才自动归还的连接
+    let conn3 = pool.acquire();
+    conn3.send("New Data");
+}</code></pre>
+<h3 id="回顾思考-5"><a class="header" href="#回顾思考-5">回顾思考</a></h3>
+<p>传统的 OOP 对象池有一个致命痛点：<strong>信任客户端</strong>。如果在 <code>try-catch</code> 里漏掉了 <code>pool.release(conn)</code>，这个连接就会永久泄漏，池子越用越小，直到系统崩溃。</p>
+<p>而在现代开发中，无论是 Rust 的 <code>Drop</code>、C++ 的智能指针析构函数，还是 Go 语言的 <code>defer pool.Put(conn)</code>，都在做同一件事：<strong>利用语言的结构特性，把“归还”这个动作从用户的视线里抹去。</strong></p>
+<p>在TS里虽然没有原生析构函数，但现代写法通常会采用<strong>闭包回调</strong>来收拢生命周期，例如：</p>
+<pre><code class="language-ts">// 现代 TS 做法：进池子、干活、出池子，一条龙封装在函数内部，用户碰不到 release
+await pool.useConnection(async (conn) =&gt; {
+    await conn.send("Hello");
+}); // 函数执行完，连接在内部自动还回去
+</code></pre>
+<p>对象池在设计分类上虽然被归为创建型，但它干的活其实是反创建。它的核心思维在于用空间的固化来换取时间的稳定。</p>
+<h2 id="7-补充依赖注入"><a class="header" href="#7-补充依赖注入">7: 补充：依赖注入</a></h2>
+<h3 id="一句话总结-6"><a class="header" href="#一句话总结-6">一句话总结</a></h3>
+<ul>
+<li><strong>本质：</strong> 对象的依赖项不再由自己内部创建出来，函数的参数不再手动传递，而是通过声明“我需要什么”，由一个独立的第三方（DI 容器）在运行时负责创建并塞给它。</li>
+<li><strong>优点：</strong> 彻底干掉了类与类之间，函数与参数之间的硬编码耦合。不再需要手动传递参数来调用一个方法，干掉了依赖层级维护的问题。</li>
+</ul>
+<h2 id="7-补充依赖注入-1"><a class="header" href="#7-补充依赖注入-1">7: 补充：依赖注入</a></h2>
+<h3 id="一句话总结-7"><a class="header" href="#一句话总结-7">一句话总结</a></h3>
+<ul>
+<li><strong>本质：</strong> 对象的依赖项不再由自己内部创建出来，函数的参数不再手动传递，而是通过声明“我需要什么”，由一个独立的第三方（DI 容器）在运行时负责创建并塞给它。</li>
+<li><strong>优点：</strong> 彻底干掉了类与类之间，函数与参数之间的硬编码耦合。不再需要手动传递参数来调用一个方法，干掉了依赖层级维护的问题。</li>
+</ul>
+<h3 id="类注入"><a class="header" href="#类注入">类注入</a></h3>
+<p>运行时需要引入：<code>import "reflect-metadata";</code>这个非常重要，因为如果运行时没有类型信息，DI容器根本不知道应该把什么东西塞给对象或者函数。</p>
+<p>第一步：定义装饰器和容器基底</p>
+<pre><code class="language-ts">// 模拟全局 IoC 容器，用 Map 建立类名到实例的映射
+class IoCContainer {
+    private services = new Map&lt;string, any&gt;();
+
+    // 注册服务
+    public register(target: any) {
+        // 获取该类的构造函数所需要的参数类型列表（由 TS 的 reflect-metadata 自动生成）
+        const paramTypes: any[] = Reflect.getMetadata("design:paramtypes", target) || [];
+        
+        // 递归解析并实例化该类所依赖的所有子组件
+        const dependencies = paramTypes.map(paramType =&gt; {
+            // 如果容器里还没初始化过这个依赖，就先初始化它
+            if (!this.services.has(paramType.name)) {
+                this.register(paramType);
+            }
+            return this.services.get(paramType.name);
+        });
+
+        // 将依赖项注入构造函数，完成当前类的实例化
+        const instance = new target(...dependencies);
+        this.services.set(target.name, instance);
+    }
+
+    // 获取服务
+    public get&lt;T&gt;(target: new (...args: any[]) =&gt; T): T {
+        return this.services.get(target.name);
+    }
+}
+
+const globalContainer = new IoCContainer();
+
+// 声明装饰器：只要贴上这个标签，就自动把自己注册到容器里
+function Injectable() {
+    return function(target: any) {
+        globalContainer.register(target);
+    };
+}
+</code></pre>
+<p>第二步：用声明式的方式编写业务组件</p>
+<pre><code class="language-ts">// 注册底层组件
+@Injectable()
+class FancyLogger {
+    public log(msg: string) {
+        console.log(`[Fancy Log] ${msg}`);
+    }
+}
+
+// 注册高层业务
+@Injectable()
+class OrderService {
+    // 只需要在构造函数里写出类型声明
+    // 至于什么时候 new、怎么 new、谁把它传进来，OrderService 完全不操心
+    constructor(private logger: FancyLogger) {}
+
+    public placeOrder(item: string) {
+        this.logger.log(`下单成功: ${item}`);
+    }
+}
+</code></pre>
+<p>使用方法：</p>
+<pre><code class="language-ts">// 业务方甚至看不见任何依赖拼装的过程，直接从容器提取顶层业务组件即可
+const orderService = globalContainer.get(OrderService);
+
+orderService.placeOrder("MacBook Pro"); 
+// 输出: [Fancy Log] 下单成功: MacBook Pro
+</code></pre>
+<h3 id="函数注入"><a class="header" href="#函数注入">函数注入</a></h3>
+<p>函数式写法的核心在于：在<strong>函数执行的瞬间</strong>，通过反射动态解析该函数声明的参数类型，从容器中捞出对应的单例，然后通过 <code>apply</code> 动态注入并完成调用。</p>
+<p>第一步：创建极简的 IoC 容器与调度核心</p>
+<pre><code class="language-ts">// 1. 全局数据容器（只存 @Component 的单例）
+const componentContainer = new Map&lt;any, any&gt;();
+
+// 2. @Component 装饰器：把类实例化并丢进容器
+export function Component() {
+  return function (target: any) {
+    // 实例化该组件并存入容器（以类本身作为 Key）
+    const instance = new target();
+    componentContainer.set(target, instance);
+  };
+}
+
+// 3. 核心魔术：动态装配参数并执行函数
+export function executeSystem(staticMethod: Function, contextMessage?: any) {
+  // 核心：利用 reflect-metadata 提取该函数在编译期保留的参数类型数组
+  const paramTypes: any[] = Reflect.getMetadata("design:paramtypes", staticMethod) || [];
+
+  // 根据参数类型，动态去容器里抓取对应的实例
+  const args = paramTypes.map((type) =&gt; {
+    // 如果当前参数类型正好是触发的消息类型，就把消息实体塞进去
+    if (contextMessage &amp;&amp; type === contextMessage.constructor) {
+      return contextMessage;
+    }
+    
+    // 否则，从组件容器里捞出对应的单例数据
+    const componentInstance = componentContainer.get(type);
+    if (!componentInstance) {
+      throw new Error(`找不到类型为 ${type.name} 的组件，请确认是否注册！`);
+    }
+    return componentInstance;
+  });
+
+  // 终极一步：使用 apply（或展开运算符）将拼装好的参数数组塞给函数并执行
+  return staticMethod(...args);
+  // 或者写成：return staticMethod.apply(null, args);
+}
+</code></pre>
+<p>第二步：定义数据与指令</p>
+<pre><code class="language-ts">// 定义指令消息
+class IncrementMessage {
+  constructor(public amount: number) {}
+}
+
+// 定义纯数据组件（贴上标签后自动进入 componentContainer）
+@Component()
+class CounterComponent {
+  public count = 0;
+}
+</code></pre>
+<p>第三步：编写纯静态逻辑系统</p>
+<pre><code class="language-ts">class CounterSystem {
+  // 注意：这里不需要写任何装饰器，只要参数类型写对了就行
+  static onIncrement(
+    msg: IncrementMessage,
+    counter: CounterComponent
+  ) {
+    // 打印看看，验证是不是真的拿到了正确的实例
+    console.log(`[System 内部] 收到消息，增加额度: ${msg.amount}`);
+    
+    // 直接修改动态注入进来的数据
+    counter.count += msg.amount;
+  }
+}
+</code></pre>
+<p>模拟引擎调度执行</p>
+<pre><code class="language-ts">// 模拟业务中产生了一个消息指令
+const mockMsg = new IncrementMessage(5);
+
+// 引擎底层调度：把“函数”和“触发的消息”丢进执行器
+executeSystem(CounterSystem.onIncrement, mockMsg);
+
+// 验证结果：去容器里捞出组件，看看数据有没有被静态方法修改成功
+const globalCounter = componentContainer.get(CounterComponent);
+console.log(`[验证结果] 全局计数器的值现在是: ${globalCounter.count}`); 
+// 输出: 5
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-important">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Important</p>
+<p>在游戏领域，往往不使用上面那种动态注入的方式，这样的性能达不到要求。对于静态类型如rust或者c++这种编译之后类型就被抹除的语言，必须依赖更强有力的宏甚至定制编译器才能做到真正的依赖注入，这样直接为每个函数生成固定的调用而不是动态注入，消除运行时开销。</p>
+</blockquote>
+<h3 id="回顾思考-6"><a class="header" href="#回顾思考-6">回顾思考</a></h3>
+<h4 id="ioc控制反转与-di依赖注入的关系"><a class="header" href="#ioc控制反转与-di依赖注入的关系">IoC（控制反转）与 DI（依赖注入）的关系</a></h4>
+<p>它们的本质关系可以用一句话概括：<strong>IoC 是哲学指导思想（目的），而 DI 是具体的工程实现手段（手段）。</strong></p>
+<p><strong>IoC (Inversion of Control - 控制反转) 是一个宏观的架构设计原则。</strong> 在传统开发中，代码的控制权在业务逻辑手里：业务函数决定什么时候调用外部库、什么时候创建依赖对象。而控制反转，就是把这个“创建对象、控制执行流程”的权力从你的业务代码里剥夺掉，上缴给外部的框架/引擎。</p>
+<p><strong>DI (Dependency Injection - 依赖注入) 是实现 IoC 最主流、最优雅的技术方案。</strong> 当大管家把控制权拿走后，业务代码怎么获取需要的资源呢？业务代码不再主动去“找”资源，而是采取“声明”的方式（在方法参数或构造函数里写上类型），等大管家在运行时动态地把资源“注入”进来。</p>
+<h4 id="为什么依赖注入能成为工业级标配"><a class="header" href="#为什么依赖注入能成为工业级标配">为什么依赖注入能成为工业级标配？</a></h4>
+<p>无论是微服务、企业级 Web 还是复杂的游戏架构，DI 解决的不是表面上的懒得写 <code>new</code>的问题，归根到底下面的三个优点，导致了所有的复杂系统里，依赖注入都是最终手段。</p>
+<ul>
+<li>
+<p><strong>极致的业务解耦与全生命周期隔离</strong>：在没有 DI 之前，为了实现单例，必须在类里写死 <code>getInstance()</code>。一旦用了 DI，你的类可以保持百分之百的纯净。它到底是全局单例、还是每次调用都新建、亦或是跟某些环境绑定的生命周期，业务代码不需要改动哪怕一个字，全部由IoC容器决定。</p>
+</li>
+<li>
+<p>**可测试性：**有了 DI，函数所有的外部依赖都变成了参数。在测试环境中，直接传进一个假的 <code>MockDatabase</code> 或者是假的 <code>mockLogger</code>，使用 <code>apply</code> 一塞，就能完成对核心业务逻辑的纯净验证。</p>
+</li>
+<li>
+<p>**摆脱依赖混乱，获得确定性：**普通的事件驱动或者直接调用，很容易陷入“A 调 B，B 调 C，C 又触发 A”的混乱黑洞中。 当引入了基于 IoC 容器的方法级注入时，控制权彻底反转了。引擎的中央调度器手握所有的数据和消息，统一负责传递参数、触发函数。</p>
+</li>
+</ul>
+<hr>
+<h2 id="再论本质"><a class="header" href="#再论本质">再论：本质</a></h2>
+<p>一个对象真正被创建到使用，需要几个步骤？很简单，首先提出一个请求，指明你要创建什么样的对象，然后真正的对象将被创建并交付给程序，最后再将对象传递到真正需要被使用程序代码中。</p>
+<p>创建型模式的本质，是把对象的请求与创建两个动作完全解耦。不管是抽象工厂、抽象方法、Builder、原型，都是不会再直接调用创建对象的真正方法。</p>
+<p>为何依赖注入要更进一步？因为依赖注入不仅解耦了请求与创建两个部分，还解耦了创建与传递两个部分，并且还将其完全的自动化了。因此可以说，依赖注入是解决创建问题的终极答案……吗？</p>
+<p>举一个生动的例子，如果一个人饿了，怎么才能填饱肚子？这不是废话，当然要吃饭。但是怎么才能吃上饭？</p>
+<p>第一种方法，是自己做饭。自己买菜自己烹饪，这对应了最原始的创建对象方法，直接调用构造函数传参。</p>
+<p>第二种方法，去食堂买饭。这时候就不需要自己做饭了，去食堂点餐即可，省去了很多麻烦，但是还是要跑腿去食堂才行，这对应了各种创建型模式。</p>
+<p>第三种方法，点外卖。现在连跑腿都省了，下单之后，剩下的唯一要做的事情就是等着饭来然后吃，这对应的正是DI。</p>
+<p>那么？还存在第四种方法吗？显然，很难，因为你已经减少到只剩下最终的目的“吃饭”了。那么，其实第四种方法也很明显了。</p>
+<p>第四种方法，不吃饭。没错！解决麻烦的最好的方法就是不吃饭！如果不需要吃饭(不需要创建对象)，就能解决问题。那么为何还要自己花钱找麻烦呢？</p>
+<hr>
+<p>让我们把第四种方法展开再说说吧。不创建对象？如果不创建对象该怎么解决问题呢？</p>
+<p>要解决这个棘手的问题，得先让我们看看对象到底是什么？</p>
+<p>不管是OOP语言，还是函数式语言。本质上对象，只是一些基础数据单元的集合，在OOP中这是一些属性，而函数式语言中这是<code>struct</code>中的各个字段。我们从OOP上讲，这个对象本质上包含了两个内容：</p>
+<p><strong>一个对象，包含了属性/字段本身之外，还隐含了这些属性/字段的组成关系。(暂不考虑对象方法)</strong></p>
+<p>现在应该可以发现一些端倪了。在一个对象中，属性/字段的关系是显式用代码写死的。你必须去写这样的代码。声明了 <code>struct A { a: string, b: number }</code>，就意味着在内存里，数据 <code>a</code> 的屁股后面必须紧跟着数据 <code>b</code>。这种“关系”是用内存偏移量在编译期死死固化的。要用它们，就必须实例化这个组合体。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct A {
+	a:string,
+	b:number
+}
+<span class="boring">}</span></code></pre>
+<p>这太死板了！原子的属性/字段我们没办法再解耦了，但如果我们能够把关系都给解耦呢？如果程序自己能够知道那些零散的属性组成了一个对象，我们就可以根本不需要实例对象了。这就是——ECS模式（这是一个很长的破折号）。ECS 模式彻底干掉了 <code>struct A</code> 这个概念。</p>
+<ul>
+<li>
+<p>属性 <code>a</code> 堆在 <code>Vec&lt;String&gt;</code> 数组里。</p>
+</li>
+<li>
+<p>属性 <code>b</code> 堆在 <code>Vec&lt;i32&gt;</code> 数组里。</p>
+</li>
+</ul>
+<p>所谓的关系，已经退化为一个纯粹的整数ID，用来标识这种特殊的对象组成关系。引擎在运行时，通过检查哪个组件数组里包含相同的ID，动态地把 <code>a</code> 和 <code>b</code> 关联起来。这直接带来了两个颠覆性的结果：</p>
+<ol>
+<li><strong>动态组合：</strong> 运行时想给一个临时加个属性？传统语言得重构类继承或加字段。ECS 里只需要把这个ID扔进新属性的数组里即可。</li>
+<li><strong>零创建成本：</strong> 没有任何复杂的构造函数，只有数组的插入操作，而且数组的内存是连续的，你可以享受到CPU缓存带来的极大红利，因为你根本没有创建任何对象！</li>
+</ol>
+<hr>
+<p>那么？到这里就结束了吗？至此对象已经被拆得七零八落已经拆无可拆。</p>
+<p>一路走来可以发现，相比最初，我们的现在的对象构成方式已经发生了巨变，ECS好像前面的所有方式都完全不同，完全是两条进化线上的物种。为什么是这样？</p>
+<p>**可以说，是本体论上的本质分歧，导致了这种结果。**二者的区别，正是下面两种完全不同的本体论在软件工程里的落地。</p>
+<h3 id="传统-oop-与创建型模式实体论"><a class="header" href="#传统-oop-与创建型模式实体论">传统 OOP 与创建型模式：实体论</a></h3>
+<ul>
+<li><strong>哲学主张：</strong> 世界是由一个个具体的、有边界的“实体”组成的。属性和行为必须依附于实体。</li>
+<li><strong>代码映射：</strong> <code>struct</code> 或 <code>class</code> 是第一等公民。数据（属性）在内存里是绑死在一起的（通过内存偏移量固化关系）。创建型模式折腾来折腾去，都是在研究如何优雅地把这一团绑死的数据实例化出来。</li>
+</ul>
+<h3 id="ecs-模式关系流本体论"><a class="header" href="#ecs-模式关系流本体论">ECS 模式：关系/流本体论</a></h3>
+<ul>
+<li><strong>哲学主张：</strong> 实体并不存在，它只是属性在某一瞬间的“关系组合”，行为也不是实体的附属，而是数据在时间维度上的流动。</li>
+<li><strong>代码映射：</strong> 彻底干掉了作为复合结构的类。
+<ul>
+<li><strong>Identity（唯一标识）：</strong> 退化为一个纯整数 <code>Entity ID</code>。</li>
+<li><strong>Attributes（属性）：</strong> 拍扁成一维的、连续的底层数组（Component）。</li>
+<li><strong>Behavior（行为）：</strong> 升级为纯粹的、无状态的遍历系统（System）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="结论历史与反思"><a class="header" href="#结论历史与反思">结论：历史与反思</a></h2>
+<p>为何OOP会成为主流？如果OOP从一开始的对世界的本体论就是错的，为何到今天人们才意识到？</p>
+<p>OOP的坏永远也说不完，CPU缓存不友好、变更对象困难。但不得不承认，<strong>OOP是符合人类对世界的认知思维的</strong>。上世纪 80-90 年代，随着微机普及，软件规模呈指数级爆炸，摩尔定律疯狂吃红利，CPU 主频从几百 MHz 飙升到几个 GHz。硬件的暴涨完美掩盖了 OOP 的低效，让大家坚信“万物皆对象”就是真理。</p>
+<p>直到 2000 年后，OOP 的遮羞布被扯掉了。摩尔定律已死，单核CPU主频达到了极限，这时候，CPU 想要跑得快，极其依赖 CPU缓存，在越来越复杂的软件面前，OOP 傲慢的“继承”和“封装”在频繁变动面前彻底崩盘，变成了阻碍维护的罪魁祸首。</p>
+<hr>
+<p>然而遗憾的是，其实这种关系思想在几十年前早就有了，只是人们一直都在错误的路上一直狂奔。</p>
+<p>这就是，<strong>关系数据库！</strong></p>
+<p>为何已经过去了几十年，关系数据库仍然是主流？关系数据的空前成功，本质上就是“关系/数据导向本体论”对“对象本体论”的一次全面降维打击。因为关系是外在且动态的，当你的业务增加新需求时，你只需要<strong>增加一张表</strong>或者<strong>加一个字段</strong>，原有的表结构完全不需要重构。这种极致的灵活性，让它统治了工业界半个世纪。</p>
+<p>然而讽刺的是，随着 OOP 的大流行，那段时间学术界和部分工业界开始鼓吹对象数据库。不过在实际应用中遭到了惨败。原因就在于它犯了和 OOP 相同的本体论错误：**把数据之间的关系硬编码锁死了。**如今除了极少数特定领域，主流市场根本见不到它的身影。</p>
+<hr>
+<p><strong>组合优于继承，不是一句空话。这背后的本质，是两种截然不同的本体论分歧。</strong></p>
+<hr>
+<p><strong>但是事实是，继承就真的一无是处吗？</strong></p>
+<p>现在让我们来开始考虑一个情况，假设你需要一个抽象的“消息”类型，他还需要携带一些数据，用来丢入调度中心，让调度中心根据消息的类型触发某些操作。如何使用继承？</p>
+<p>很简单，定义一个<code>BaseMessage</code>，然后从其中派生各种各种各样的例如表示系统开始的<code>StartMessage</code>，表示终止的<code>EndMessage</code>，携带数据的<code>IncreaseDataMessage</code>等等。</p>
+<p>这很自然，然后利用多态，只需要声明调度器接受一个<code>BaseMessage</code>就可以工作了。</p>
+<p><strong>可如果你使用ECS，事情会变成什么样？</strong></p>
+<p>你将被迫将一个完整的消息，拆分成独立的实体，获取你可能拆成一个实体上，拥有<code>Message</code>和<code>IncreaseData</code>两个抽象的含义，然后把数据作为其他组件也一同传递。当使用时，你必须去判断这些组合到底是什么含义，还必须判断该组合是不是非法的，比如如果一个只有<code>IncreaseData</code>的实体是什么意思呢？显然这是荒谬的。</p>
+<p>结果你的调度中心变成了一个巨大的<code>switch</code>语句，这正是OOP出现之前，使用C语言没有继承与多态时的情况。</p>
+<p>以上的根本原因在于：</p>
+<p><strong>ECS只适合用于描述具体的、携带数据的、持久的、类型无关的数据。而这个任务需要的是一个抽象的、可能不含数据的、瞬时的、类型本身就携带了信息的信号。</strong></p>
+<p>当你使用组合去表达一个抽象的事物，你必须面对的问题：一个抽象的事物如何组合？。抽象与抽象之间不是通过组合得来的，你不能说<code>IncreaseData</code>与<code>Message</code>二者组合成了一个<code>IncreaseDataMessage</code>消息。抽象的事物产生了组合，并不仅仅是放在一起，抽象之间会发生“纠缠”从而诞生新的抽象。而ECS，恰恰有一个极其重要的前提条件，你不能假设任何组件只有当其他组件存在时实体才有意义，不然ECS就会发生退化。</p>
+<p>因为我们可以说，组合优于继承，并不是绝对的，当一个系统越来越以数据为中心驱动，那么组合出现的情况就越多。当一个系统越来越以语义为中心驱动，那么继承与多态才能发挥自己的真正优势。</p>
+<hr>
+<p><strong>最重要的不是知道什么时候该使用哪些设计模式，而是不该用那些设计模式。我想这才是真正的精髓。</strong></p>
+<hr>
+<p>那么，Rust是如何解决没有继承问题的呢？很显然，这样说其实很肤浅。</p>
+<p><strong>问题根本不在于有没有继承本身，而是当抽象发生纠缠成了新的抽象时候，如何表达这种抽象上的层级关系？</strong></p>
+<p>在Rust中，我们使用代数类型，即<code>enum</code>来表达这种事物，因此我们可以写成下面这样。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>enum Message {
+    Start, // 纯粹的语义信号，不带数据
+    End,   // 纯粹的语义信号，不带数据
+    Increase(IncreaseData), // 语义与数据的完美纠缠
+}
+struct IncreaseData {
+    amount: u32,
+}
+<span class="boring">}</span></code></pre>
+<p>表面上看这只不过是把很多类型当作一个类型来使用，然而这，其实正是继承和多态的核心。本质上来讲，这表达了一种抽象的层级。即is-a关系，而组合，是has-a关系。</p>
+<p>因此，Rust虽然没有继承，但是Rust并不是缺乏is-a关系的表达能力喔！OOP 的继承是一种<strong>开放的多态</strong>（你不知道未来还会有多少个子类继承 <code>BaseMessage</code>，必须靠虚表动态分发）；而 Rust 的 <code>enum</code> 是一种<strong>闭合的多态</strong>（编译期你就明确知道只有这几种消息类型）。它更完美表达了抽象的层级和纠缠。</p>
+<hr>
+<p><strong>OOP不是死了，他的核心以一种更完善的姿态，以一种新的名字——代数类型与接口，重新回到了现代语言中。</strong></p>
+<hr>
+<p>最终我们终于到了这里，世界的终点。</p>
+<ul>
+<li>
+<p>看到<strong>大量、流动、属性高度正交的业务数据</strong>（如游戏实体、大批量订单流水批处理、高性能报表数据），关系型/ECS/组合路线（has-a）。</p>
+</li>
+<li>
+<p>看到<strong>有限、闭合、带有强内聚语义、决定控制流走向的逻辑信号</strong>（如网络协议包、状态机事件、编译器 AST 语法树节点），走代数数据类型/多态/模式匹配路线（is-a）。</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="论UI中的组合与继承.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="论UI中的组合与继承.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
