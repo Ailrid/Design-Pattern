@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e7be2b06.js";
+            window.path_to_searchindex_js = "searchindex-c211202c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-bd8de604.js"></script>
@@ -176,6 +176,7 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="结构型设计模式"><a class="header" href="#结构型设计模式">结构型设计模式</a></h1>
+<p>结构型模式主要包含两部分，一部分是多个对象之间的结构，表现为研究如何组织对象构建更复杂数据结构；一部分是对象内部的结构，表现为研究如何修改对象的内部结构从而增加新的功能。</p>
 <h2 id="1-adapter"><a class="header" href="#1-adapter">1: Adapter</a></h2>
 <h3 id="一句话总结"><a class="header" href="#一句话总结">一句话总结</a></h3>
 <ul>
@@ -193,7 +194,7 @@
 <li>对象适配器（本质是组合）：C内部直接持有一个B的引用，直接把对C的调用转发给B。</li>
 </ul>
 <h3 id="现代写法"><a class="header" href="#现代写法">现代写法</a></h3>
-<p>在Rust中，根本不需要这种又臭又长的写法。 <strong>孤儿规则</strong>确保了，<strong>只要trait或struct中有一个是在当前 crate中定义的</strong>，你就可以直接为这个类型实现这个Trait。</p>
+<p>在Rust中，根本不需要这种又臭又长的写法。<strong>孤儿规则</strong>确保了，<strong>只要trait或struct中有一个是在当前 crate中定义的</strong>，你就可以直接为这个类型实现这个Trait。</p>
 <p>因此你可以直接在不改动源代码的前提下复用源代码并当作另一个类型来使用。</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -285,7 +286,7 @@ impl&lt;D: Decoder&gt; VideoPlayer&lt;D&gt; {
 }
 <span class="boring">}</span></code></pre>
 <h3 id="回顾思考-1"><a class="header" href="#回顾思考-1">回顾思考</a></h3>
-<p>桥接模式和适配器模式一样，在现代语言里沦为了语言的基本功能之一，不在需要OOP的笨拙写法。</p>
+<p>桥接模式和适配器模式一样，在现代语言里沦为了语言的基本功能之一，不再需要OOP的笨拙写法。</p>
 <h2 id="3-composite"><a class="header" href="#3-composite">3: Composite</a></h2>
 <h3 id="一句话总结-2"><a class="header" href="#一句话总结-2">一句话总结</a></h3>
 <ul>
@@ -324,7 +325,7 @@ class Panel implements UIComponent {
 </code></pre>
 <p>关键在于，基本的叶子节点和容器节点，要继承同一个父类，在容器节点内，利用多态将其他的叶子节点或者新的容器节点与父容器连接。</p>
 <h3 id="现代写法-2"><a class="header" href="#现代写法-2">现代写法</a></h3>
-<p>在Rust中，没有OOP，但是利用代数类型和<code>trait</code>与模式匹配，一样可以实现这种树形结构的描述。</p>
+<p>在Rust中没有OOP，但是利用代数类型和<code>trait</code>与模式匹配，一样可以实现这种树形结构的描述。</p>
 <p>正如论UI中的组合与继承中写的一样，这种方式相比OOP有一种致命的缺陷：<strong>无法在不更改源代码的前提下，添加新的节点类型。</strong></p>
 <p>这种方式非常优雅且安全，但更适合描述AST之类的固定种类的抽象语法树，对于需要动态扩展的UI树就很困难了。</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -446,7 +447,7 @@ fn fetch_data() {
     // 核心业务逻辑
 <span class="boring">}</span></code></pre>
 <h3 id="回顾思考-3"><a class="header" href="#回顾思考-3">回顾思考</a></h3>
-<p>装饰器在OOP里很有用，但是现在基本上已经变成了语言基础设施，不需要用笨拙的套娃方法。而在现代语言里，装饰器甚至都已经直接被更高级的功能代替了。</p>
+<p>装饰器在OOP里很有用，但是现在基本上已经变成了语言基础设施，不需要用笨拙的套娃方法。而在现代语言里，装饰器已经被直接内置，或被更高级的功能代替了。</p>
 <h2 id="5-facade"><a class="header" href="#5-facade">5: Facade</a></h2>
 <h3 id="一句话总结-4"><a class="header" href="#一句话总结-4">一句话总结</a></h3>
 <ul>
@@ -501,6 +502,33 @@ const rbacProxy = new Proxy(realUser, {
 <p>和装饰器一样，Rust直接使用宏来解决，编译期直接把函数生吞进去，改写它的抽象语法树，然后再吐出一个被代理逻辑包裹后的新函数。甚至不需要运行时开销。</p>
 <h3 id="回顾思考-6"><a class="header" href="#回顾思考-6">回顾思考</a></h3>
 <p>代理是非常重要的功能，因此现代语言几乎全部内置甚至直接用更高级的方法解决了。</p>
+<h2 id="补充-hooks到底是什么"><a class="header" href="#补充-hooks到底是什么">补充: Hooks到底是什么？</a></h2>
+<p>也许你到这里回想，前端经常使用的<code>Hooks</code>，到底对应的是什么呢？从外在表现上讲，<code>Hooks</code>其实有些类似于<code>Decorator</code>。他们的最大目的都是为了在不影响其他部分的前提下，为对象/组件加入新的功能。</p>
+<p><strong>但是，这只是表象，二者完全不是一个领域的东西。</strong></p>
+<ul>
+<li>
+<p><strong>结构型模式的本质：</strong> 是OOP的产物。他研究的是如何构建复杂数据结构和如何为结构添加新功能。能够使用的前提是，必须存在一个真正的拥有数据的实体。</p>
+</li>
+<li>
+<p><strong>Hooks 的本质：</strong> 是函数式编程的产物。它不是结构型模式，因为使用<code>Hooks</code>的前提并不要求必须存在某些实体，他也做到了为组件添加新功能。</p>
+</li>
+</ul>
+<p>实际上，在函数式流行之前，在<code>Hooks</code>出现之前，前端为了给组件加入新功能，用的就是标准的结构型模式（装饰器/代理）。</p>
+<pre><code class="language-ts">// 这就是地地道道的面向对象装饰器模式
+const EnhancedComponent = withAuth(withLogger(MyComponent));
+</code></pre>
+<p>实际上，二者的根源在于OOP的老生常谈的问题：<strong>OOP把结构与功能死死绑定在了一起。</strong></p>
+<ul>
+<li>第一个问题是，当你使用继承来实现多态时会捆绑一堆额外的大礼包赠送给你。</li>
+<li>第二个问题是，当你想要增加新的功能，必须得先持有类和对象。</li>
+</ul>
+<p>不过，我们在这里主要说的是后者，关于“如何为结构添加新功能”的部分，在前者“如何构建复杂数据结构”上，前端正是非常好的践行了组合设计模式（虽然如同我们讨论的，<strong>它名义上叫</strong>组合，在本质上却是依靠多态实现的）</p>
+<h2 id="结论创建型与结构型设计模型的消失"><a class="header" href="#结论创建型与结构型设计模型的消失">结论：创建型与结构型设计模型的消失</a></h2>
+<p>回顾以上的所有结构型模式，可以发现，这些所有设计模式，在现代几乎已经完全成为了语言的内置特性，或者被更高级的泛型与宏代替了，这是为什么？</p>
+<p>整个编程语言其核心就是研究两件事，组织数据结构与操作控制流，后者属于行为型设计模式的核心内容。</p>
+<p>而前者，则又包含了两个部分：结构的创建与结构的组成本身。这正好对应了创建型设计模式和结构型设计模型的核心内容。</p>
+<p>相比于操控动态、变化的控制流，研究静态、固定的数据结构显然要更简单，也更容易内置于语言本身。</p>
+<p>因此，可见创建型设计模式和结构性设计模式的大部分内容都成为了现代语言的内置特性不是没有原因的。这 12 种设计模式（创建型 5 种 + 结构型 7 种）在今天看来，很大程度上是因为 1994 年的 C++/Java 缺乏现代高级泛型、缺乏元编程（宏/装饰器语法）、缺乏代数数据类型（ADT），且强制“万物皆类”所导致的工程妥协，在现代编程语言面前自然就消失了。</p>
 
                     </main>
 
