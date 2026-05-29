@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>UI中的组合与继承 - 设计模式随笔</title>
+        <title>总结 - 设计模式随笔</title>
 
 
         <!-- Custom HTML head -->
@@ -175,144 +175,39 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
-<h1 id="论ui中的组合与oop"><a class="header" href="#论ui中的组合与oop">论UI中的组合与OOP</a></h1>
-<h2 id="回顾组合与oop"><a class="header" href="#回顾组合与oop">回顾组合与OOP</a></h2>
-<p>在web届曾经有一场旷日战争，争论UI到底是组合还是继承。最终的结论显而易见，组合优于继承现在几乎成了一种教条，那么，对于UI来说，组合真的由于继承吗？</p>
-<h3 id="组合"><a class="header" href="#组合">组合</a></h3>
-<p>要重新看待这个问题，我们首先得给UI开发里的组合下一个完整的定义。相比传统的OOP，到底组合了什么？</p>
-<p>更具体的来说，在UI开发中的组合，通常分为两类：</p>
-<ul>
-<li><strong>UI 组合（组件复用）：</strong> 将大型 UI 拆解为细小的原子组件。父组件决定如何布局，子组件决定如何渲染。</li>
-<li><strong>逻辑组合（行为复用）：</strong> 编写 <code>useXXX</code> 这样的 Hook。需要该功能的组件通过“组合” Hook 来获得能力。</li>
-</ul>
-<p>二者本质上描述了两件事：使用组合创建层级与使用组合创建新功能。</p>
-<p>对于后者毫无疑问的这是组合，但是对于前者**，创建层级，真的属于组合吗？**</p>
-<h3 id="oop"><a class="header" href="#oop">OOP</a></h3>
-<p>OOP 的核心精华在于：<strong>“行为的抽象”与“类型的组合”</strong>。与其讨论单纯的OOP，不如讨论这两个精华在现代语言中，是怎么存在的。</p>
-<h4 id="接口-interfacetrait行为的抽象"><a class="header" href="#接口-interfacetrait行为的抽象">接口 (Interface/Trait)：行为的抽象</a></h4>
-<p>OOP 中继承的主要目的之一是多态，但继承强行引入了“数据结构的传递”和“隐式层级关系”，导致了脆弱基类问题。</p>
-<ul>
-<li><strong>现代方式</strong>：接口（尤其是像 Rust 的 <code>Trait</code> 或 Go 的 <code>Interface</code>）把“类型能做什么”彻底从“类型是什么”中剥离了出来。它不再关心你的内存布局，只关心你实现了什么行为。</li>
-<li><strong>好处</strong>：接口保留了 OOP 中“调用方无需关心具体实现”的灵活性，但去掉了 OOP 必须通过继承链来共享实现的强制要求。</li>
-</ul>
-<h4 id="代数类型-adt闭合的多态"><a class="header" href="#代数类型-adt闭合的多态">代数类型 (ADT)：闭合的多态</a></h4>
-<p>OOP 中多态的另一个面貌是：通过 <code>if/else</code> 或 <code>switch</code> 判断对象类型，或者通过继承树来处理不同的子类。这在 OOP 中通常通过“虚函数”自动分发。</p>
-<ul>
-<li><strong>现代方式</strong>：代数类型配合模式匹配，把 OOP 中那种散落在各个子类 <code>override</code> 方法里的逻辑，收拢回一个清晰的类型定义中。它解决了 OOP 最痛的“Expression Problem”（扩展操作难，扩展类型难）。</li>
-<li><strong>好处</strong>：ADT 保留了 OOP 中“处理多种类型可能性”的逻辑表达力，但通过编译器的强制检查，消灭了运行时出现“未定义行为”的可能性。</li>
-</ul>
-<h2 id="ui的本质"><a class="header" href="#ui的本质">UI的本质</a></h2>
-<p>所以，现在来看，组件复用属于组合吗？在动态语言中这样的区别不够明显，但是如果在静态语言中如何描述一个UI树？显然解法是要么利用OOP的继承，要么利用接口和代数类型，但是其二者其实本质上是相同的，都是为了实现多态。</p>
-<p><strong>显然，UI组合不是真正的组合，其本质是多态。</strong></p>
-<h3 id="开放多态树"><a class="header" href="#开放多态树">开放多态树</a></h3>
-<p>利用开放多态（继承），可以很好的描述一个UI的树结构，这已经在OOP中得到了大量的应用。利用继承，我们可以在不更改UI库源代码的情况下，创建自己的新UI组件类型，并能够将其兼容进UI框架中通用的<code>UIComponent</code>类型容器中。</p>
-<pre><code class="language-typescript">// 统一的语义接口（开放多态）
-interface UIComponent {
-    render(): void;
-}
-
-// 叶子节点（原子语义）
-class Button implements UIComponent {
-    render() { console.log("  渲染一个按钮"); }
-}
-
-// 组合节点（容器，既是 UIComponent）
-class Panel implements UIComponent {
-    private children: UIComponent[] = [];
-
-    public add(child: UIComponent) { this.children.push(child); }
-
-    render() {
-        console.log("渲染一个面板，开始向下递归：");
-        // 核心：一视同仁，客户端和父节点都不需要写 switch/case 或者是 match
-        this.children.forEach(child =&gt; child.render());
-    }
-}
-</code></pre>
-<h3 id="闭合多态树"><a class="header" href="#闭合多态树">闭合多态树</a></h3>
-<p>那么，进一步，利用接口和代数类型怎么表达UI的层级结构？</p>
-<p>在前面我们说，OOP中的多态在现代语言中通过代数数据类型与接口实现了同样的功能，因此可以写出这样的代码来描述一个树形结构。但是——这里的关键是代数类型是一种封闭的多态，如果要添加新的UI组件，必须更改整个代数类型，这意味着，如果你在写一个<strong>通用 UI 框架</strong>，麻烦就大了。如果用户想自定义一个自己的组件并塞进框架的容器里，他们无法做到！因为他们没有权限去修改框架源码的<code>enum</code>类型，而且增加一个新的类型，意味着要大动干戈地修改原有的枚举定义，并且所有 <code>match</code> 它的地方全都要改一遍。这对框架设计来说是毁灭性的。</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// 用代数类型穷尽节点的所有可能性（闭合多态）
-#[derive(Debug)]
-pub enum UIWidget {
-    Button { text: String },
-    Text { content: String },
-    Panel { children: Vec&lt;UIWidget&gt; },
-}
-
-impl UIWidget {
-    // 统一的行为方法，内部通过模式匹配（Pattern Matching）分发逻辑
-    pub fn draw(&amp;self) {
-        match self {
-            UIWidget::Button { text } =&gt; {
-                println!("  [渲染按钮]: {}", text);
-            }
-            UIWidget::Text { content } =&gt; {
-                println!("  [渲染文本]: {}", content);
-            }
-            UIWidget::Panel { children } =&gt; {
-                println!("[开始渲染面板] -&gt;");
-                // 一视同仁地向下递归遍历
-                for child in children {
-                    child.draw();
-                }
-                println!("&lt;- [面板渲染结束]");
-            }
-        }
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>而OOP是开放多态，从不假设数量。这就导致了一个天然的结果——<strong>OOP天然就是适合用来组建真正的UI树</strong>。很多UI框架早以证实了这一点，Flutter、早期的React，源代码里都是OOP。</p>
-<p>有很多框架采用了一种讨巧的方式，比如SwiftUI或者Slint等，将修改结构后需要更改源代码的问题，交给了编译器来自动化工作，让你写起来感觉有开放多态的好处，但是实际上运行时却没有OOP的开销和问题。但这往往导致编译器报错出来的类型会嵌套几十层如同天数，同时也无法良好的支持热重载。</p>
-<p>但是！(这是一个重要的转折)。这并不代表这是OOP的功劳，因为继承仍然是一种很糟糕的方式，因为在获得开放多态的能力同时，继承还捆绑了一大堆方法和属性等等无用的捆绑大礼包功能。如果我们能够拥有一种继承之外的开放多态实现方法。或许也就不需要承担继承带来的额外成本了。</p>
-<p>或许你有很多的方法仍然可以绕着来实现这样的开放多态，但是绝对不会优雅，最终你会发现自己绝对又结合类型擦除，重新实现了OOP中的虚表。比如写成下面这样。</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// 开放多态的接口
-trait Widget {
-    fn draw(&amp;self);
-}
-
-// 组合节点：不再持有具体类型，而是通过 Box&lt;dyn Widget&gt; 强行开辟开放多态的后门
-struct Container {
-    children: Vec&lt;Box&lt;dyn Widget&gt;&gt;, // 类型擦除，通过虚表动态分发
-}
-
-impl Widget for Container {
-    fn draw(&amp;self) {
-        for child in &amp;self.children {
-            child.draw(); // 递归调用
-        }
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>因此，可以说，**最好的UI方式其实是使用动态语言而不是静态语言来实现UI。**现实里往往也都是这么做的。比如游戏里大量使用Lua来描述UI，JS天生就是动态类型的语言。<strong>归根到底，动态语言里根本就没有多态的问题，因为他天生就是多态的。</strong>（比如QML就是这样的典型例子，使用一个极简的js运行时来描述UI）。</p>
-<h2 id="bevy_ui与rust的失败"><a class="header" href="#bevy_ui与rust的失败">bevy_ui与Rust的失败</a></h2>
-<p>bevy虽然很强大，但是bevy_ui却是公认的难用，这是为什么？</p>
-<p>归根到底，因为bevy_ui试图强行在ecs里模拟树形结构，使用with_children这样的组件，来构建实体的层级关系，这犯了本体论上的根本错误。</p>
-<p><strong>首先，UI是一个语义和控制流驱动的，而不是一个数据驱动的系统。</strong></p>
-<p>虽然主流的观点认为<code>UI=f(state)</code>，但是其实<code>state</code>往往根本不属于UI而属于业务本身（这是ECS的领域，控制数据与持久化状态），一个良好的软件不能因为UI出错了整个系统就跑不起来了，在任何复杂的软件里这都是极其严重的架构问题（除了“独树一帜”的web领域喜欢把业务逻辑和状态和UI塞到一起）。</p>
-<p>事实上，f才是保留式UI的关键，这是一个高度语义化的动态树形结构。因此ECS在描述UI上就天然的处于弱势，不适合来描述UI。</p>
-<p><strong>其次，适合描述层级关系的是Rust的enum或者Box<dyn>，但是封闭多态正好撞上了通用UI框架的死区。</dyn></strong></p>
-<p>因此可以说，bevy_ui的失败是必然的。</p>
-<p>甚至可以进一步说，由于Rust还拥有借用检查器，这对于保留式UI的节点相互借用更是毁灭性打击。同样的封闭多态问题，对于Go语言来说也是存在的，且Go语言的类型表达能力比Rust还弱一些，因此可以得出一个显然结论：</p>
-<p><strong>Rust和Go这样的语言，根本就不适合用来描述语义化的、状态纠缠的、需要开放多态的、保留式的UI。</strong></p>
-<p>这样的语言，如果硬要去构建可拓展的保留式UI，要么大量使用类型擦除并手动管理多态，要么走Slint那样的路，使用DSL编写UI并编译构建。要么，走立即式或者混合式UI的路子。</p>
-<p>只要UI在内存里还是一个需要不断变化和添加新类型的树，闭合多态语言就会迎来不可能三角：要在“类型安全、无性能开销、通用扩展性”中三选二。保留式的通用UI框架必须选扩展性，于是Rust/Go就必须为了强行实现扩展性而付出代价。</p>
+<h1 id="总结"><a class="header" href="#总结">总结</a></h1>
+<p><em>计算机科学中的所有问题都可以通过增加一个间接层来解决，除了中间层过多导致的问题。</em></p>
+<p>​																										<em>——编程届谚语</em></p>
+<p>如果把由于1994年OOP缺陷导致的那些套娃和补丁而诞生的设计模式全部剔除掉，23种设计模式剩下的骨干血肉，就是一条通往“极致解耦”的漫长道路。</p>
+<hr>
+<p>在创建模式中，我们研究从一个对象的请求——创建——传递——使用的过程。</p>
+<p>通过解耦对请求与创建，诞生了<code>Abstract Factory</code>、<code>Factory Method</code>、<code>Builder</code>、<code>Prototype</code>。</p>
+<p>通过解耦创建与传递，诞生了<code>Ioc</code>。</p>
+<hr>
+<p>在结构模式中，我们研究多个对象之间的结构与对象内部结构的结构。</p>
+<p>通过解耦对象之间的结构，诞生了<code>Adapter</code>、<code>Bridge</code>、<code>Composite</code>。</p>
+<p>通过解耦对象内部的结构，诞生了<code>Decorator</code>、<code>Facade</code>、<code>Proxy</code>。</p>
+<hr>
+<p>在行为模式中，我们研究对象之间构成的动态的控制流抽象关系。</p>
+<p>通过解耦响应者之间的关系，诞生了<code>Chain of Responsibility</code>。</p>
+<p>通过解耦请求与响应之间的关系，诞生了<code>Command</code>。</p>
+<p>通过解耦内部封装与外部访问之间的关系，诞生了<code>Iterator</code>。</p>
+<p>通过解耦对象之间的通讯关系，诞生了<code>Mediator</code>、<code>Observer</code>。</p>
+<p>通过解耦数据与算法的定义与使用之间的关系，诞生了<code>Strategy</code>、<code>Template Method</code>、<code>Visitor</code>。</p>
+<hr>
+<p>所有的解耦，本质上都是添加了一层抽象中间层。而中间层过多带来的问题则是性能损耗、调试地狱、代码臃肿难以维护。</p>
+<p>设计模式不是万能的，错误的使用设计模式带来的危害往往要比正确使用设计模式带来的优点要大的多。</p>
+<p>单一的设计模式不能解决复杂问题，现实中往往一个功能要采用多种设计模式复合才能更好的解决。</p>
+<p>正如之前所说，谨记，<strong>最重要的不是知道什么时候该使用哪些设计模式，而是不该用那些设计模式。</strong></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="创建型模式.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="行为型模式.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="结构型模式.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -320,13 +215,10 @@ impl Widget for Container {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="创建型模式.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="行为型模式.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="结构型模式.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                    </a>
             </nav>
 
         </div>

@@ -1,0 +1,1076 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>行为型模式 - 设计模式随笔</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-a230290a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-6593e7aa.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">设计模式随笔</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="行为型设计模式"><a class="header" href="#行为型设计模式">行为型设计模式</a></h1>
+<p>行为型模式的研究的是对象之间构成的动态的控制流抽象关系。</p>
+<h2 id="1-chain-of-responsibility"><a class="header" href="#1-chain-of-responsibility">1: Chain of Responsibility</a></h2>
+<h3 id="一句话总结"><a class="header" href="#一句话总结">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**使一个请求能够被多个对象依次处理，解耦请求的发送者和处理者，形成一条链。（个人认为更好的说法是，解耦每个处理者之间的耦合，倒不是发送者和处理者）</p>
+</li>
+<li>
+<p>**优点：**低耦合，链条上的每个处理者都不需要知道该请求是谁发送过来的也不需要知道链条的结构。</p>
+</li>
+</ul>
+<h3 id="oop写法"><a class="header" href="#oop写法">OOP写法</a></h3>
+<p>传统OOP里责任链关键是要有一个公共的<code>Handler</code>基类，该基类需要有一个<code>handle</code>方法和一个<code>setNext</code>来组装链条，根据输入来动态的分发请求。</p>
+<pre><code class="language-ts">// 抽象处理者
+abstract class Handler {
+    protected next: Handler | null = null;
+
+    public setNext(handler: Handler): Handler {
+        this.next = handler;
+        return handler; // 返回 handler 以支持链式调用
+    }
+
+    public handle(request: string): void {
+        if (this.canHandle(request)) {
+            this.process(request);
+        } else if (this.next) {
+            this.next.handle(request);
+        } else {
+            console.log(`请求 ${request} 未被处理`);
+        }
+    }
+
+    protected abstract canHandle(request: string): boolean;
+    protected abstract process(request: string): void;
+}
+
+</code></pre>
+<p>然后继承该基类生成不同的处理类，再进行组装。</p>
+<pre><code class="language-ts">// 具体处理者 A
+class ConcreteHandlerA extends Handler {
+    protected canHandle(request: string): boolean {
+        return request === "A";
+    }
+
+    protected process(request: string): void {
+        console.log(`处理者 A 处理了请求: ${request}`);
+    }
+}
+
+// 具体处理者 B
+class ConcreteHandlerB extends Handler {
+    protected canHandle(request: string): boolean {
+        return request === "B";
+    }
+
+    protected process(request: string): void {
+        console.log(`处理者 B 处理了请求: ${request}`);
+    }
+}
+
+// 客户端调用
+const handlerA = new ConcreteHandlerA();
+const handlerB = new ConcreteHandlerB();
+
+// 组装链: A -&gt; B
+handlerA.setNext(handlerB);
+
+// 测试
+handlerA.handle("A"); // A 处理
+handlerA.handle("B"); // B 处理
+handlerA.handle("C"); // 未处理
+</code></pre>
+<h3 id="现代写法"><a class="header" href="#现代写法">现代写法</a></h3>
+<p>在现代编程中，几乎很难再见到纯正的责任链设计，也不再使用OOP来设计，这个设计进化出了两个大名鼎鼎的近亲：<code>Pipeline</code>、<code>洋葱模型</code>。或者，统一称为<code>Middleware</code>。</p>
+<p><code>Pipeline</code>与责任链的区别是，责任链的每个节点可以直接决定处理过程是否停止，而<code>Pipeline</code>只负责处理数据并传递给下个节点，而且每个节点通常会改变数据的内容。二者的核心区别用代码来体现是非常明显的。</p>
+<pre class="playground"><code class="language-rust">// 定义处理阶段的 trait
+trait Stage&lt;I, O&gt; {
+    fn process(&amp;self, input: I) -&gt; O;
+}
+
+// 管道结构体
+struct Pipeline&lt;I, O&gt; {
+    // 使用 Box&lt;dyn ...&gt; 存储不同类型的管道
+    stages: Vec&lt;Box&lt;dyn Fn(I) -&gt; O&gt;&gt;,
+}
+
+// 这里为了简化，假设所有阶段输入输出类型一致，在真正的用的时候通常会通过泛型链式组合处理不同类型的数据
+struct PipelineProcessor&lt;T&gt; {
+    stages: Vec&lt;Box&lt;dyn Fn(T) -&gt; T&gt;&gt;,
+}
+
+impl&lt;T&gt; PipelineProcessor&lt;T&gt; {
+    fn new() -&gt; Self {
+        Self { stages: Vec::new() }
+    }
+
+    fn add_stage&lt;F&gt;(&amp;mut self, stage: F) 
+    where F: Fn(T) -&gt; T + 'static {
+        self.stages.push(Box::new(stage));
+    }
+
+    fn execute(&amp;self, mut input: T) -&gt; T {
+        for stage in &amp;self.stages {
+            input = stage(input); // 每一阶段都必须处理并传递
+        }
+        input
+    }
+}
+
+fn main() {
+    let mut pipe = PipelineProcessor::new();
+
+    // 添加加工阶段
+    pipe.add_stage(|x: i32| x + 1);
+    pipe.add_stage(|x: i32| x * 2);
+
+    let result = pipe.execute(5); // (5 + 1) * 2 = 12
+    println!("Pipeline Result: {}", result);
+}</code></pre>
+<p><code>洋葱模型</code>的本质是递归式包裹。与责任链的单向直线不同，它的核心特征是能够同时在请求处理前和处理后都执行逻辑。这个名字是因为，请求从外层进入，层层穿透核心业务，然后再原路返回，再次穿透每一层。</p>
+<p>在<code>Koa/Express</code>等框架里的核心，就是洋葱模型。</p>
+<pre><code class="language-ts">// 定义上下文类型 (Context)
+type Context = Record&lt;string, any&gt;;
+
+// 定义中间件函数类型
+type Next = () =&gt; Promise&lt;void&gt;;
+type Middleware = (ctx: Context, next: Next) =&gt; Promise&lt;void&gt;;
+
+class OnionPipeline {
+    private middlewares: Middleware[] = [];
+
+    // 注册中间件
+    use(fn: Middleware) {
+        this.middlewares.push(fn);
+    }
+
+    // 洋葱执行器
+    private compose() {
+        return (ctx: Context) =&gt; {
+            // 这是一个核心的递归函数，每次重新middlewares列表里掏出来一个新的中间件
+            // 执行完之后，调用next()然后启动新的递归下降，next()执行完成之后再递归上升
+            const dispatch = async (i: number): Promise&lt;void&gt; =&gt; {
+                if (i === this.middlewares.length) return;
+                const fn = this.middlewares[i];
+                // 递归执行下一个
+                await fn(ctx, () =&gt; dispatch(i + 1));
+            };
+            return dispatch(0);
+        };
+    }
+
+    async run(ctx: Context) {
+        await this.compose()(ctx);
+    }
+}
+
+// --- 使用示例 ---
+const app = new OnionPipeline();
+
+// 中间件 1
+app.use(async (ctx, next) =&gt; {
+    console.log("1. 进入中间件 A (前置)");
+    await next();
+    console.log("1. 离开中间件 A (后置)");
+});
+
+// 中间件 2
+app.use(async (ctx, next) =&gt; {
+    console.log("2. 进入中间件 B (前置)");
+    ctx.result = "处理完毕"; // 模拟业务逻辑
+    await next();
+    console.log("2. 离开中间件 B (后置)");
+});
+
+app.run({}).then(() =&gt; console.log("执行结束"));
+</code></pre>
+<h3 id="回顾思考"><a class="header" href="#回顾思考">回顾思考</a></h3>
+<p>组合责任链+Pipeline+洋葱模型，可以获得一个更强大控制能力更强的混合模型。可以写出西面这样一个更强的升级版。</p>
+<p>这个函数在派发时，<code>middleware</code>不仅可以和责任链一样，决定是否继续继续传递给下一个中间件，还可以在像Pipeline一样将数据进行依次的处理，最终在结束时调用真正的<code>finalAction</code>。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>private pipeline(message: BaseMessage, finalAction: () =&gt; void) {
+  let index = 0;
+  const next = () =&gt; {
+    if (index &lt; this.middlewares.length) {
+      this.middlewares[index++](message, next); // 核心递归调用，传递 next 控制权
+    } else {
+      finalAction(); // 链条末端执行核心逻辑
+    }
+  };
+  next();
+}
+
+<span class="boring">}</span></code></pre>
+<p>这种组合模式，是现代框架的典型写法。这就是一个用洋葱模型实现的中间件管道。它将业务逻辑执行前后的预处理与核心逻辑调度完全分离开了。</p>
+<h2 id="2-command"><a class="header" href="#2-command">2: Command</a></h2>
+<h3 id="一句话总结-1"><a class="header" href="#一句话总结-1">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**把一个请求封装为对象，并携带请求的具体操作。</p>
+</li>
+<li>
+<p>**优点：**解耦请求的发送者与接受者，实现撤销/重做最典型的手段。</p>
+</li>
+</ul>
+<h3 id="oop写法-1"><a class="header" href="#oop写法-1">OOP写法</a></h3>
+<p>在命令模式的 OOP 标准写法中，重点在于将调用逻辑（<code>Invoker</code>）与执行逻辑（<code>Receiver</code>）通过命令接口（<code>Command</code>）彻底剥离。</p>
+<pre><code class="language-ts">// 接收者 (Receiver)：真正干活的对象
+class Light {
+    turnOn() { console.log("灯已打开"); }
+    turnOff() { console.log("灯已关闭"); }
+}
+
+// 抽象命令 (Command)
+interface Command {
+    execute(): void;
+}
+
+// 具体命令 (Concrete Command)：持有接收者，封装具体的动作
+class TurnOnCommand implements Command {
+    constructor(private light: Light) {}
+    execute() { this.light.turnOn(); }
+}
+
+class TurnOffCommand implements Command {
+    constructor(private light: Light) {}
+    execute() { this.light.turnOff(); }
+}
+
+// 调用者 (Invoker)：只负责触发命令，完全不知道具体动作
+class RemoteControl {
+    private command?: Command;
+
+    setCommand(command: Command) {
+        this.command = command;
+    }
+
+    pressButton() {
+        this.command?.execute();
+    }
+}
+
+// --- 客户端使用 ---
+const light = new Light();
+const turnOn = new TurnOnCommand(light);
+const turnOff = new TurnOffCommand(light);
+const remote = new RemoteControl();
+
+remote.setCommand(turnOn);
+remote.pressButton(); // 输出: 灯已打开
+</code></pre>
+<p>现在，<code>RemoteControl</code> 不需要知道 <code>Light</code> 类存在，它只认 <code>Command</code> 接口。即使以后要控制“风扇”或“空调”，只要实现 <code>Command</code> 接口，<code>RemoteControl</code> 的代码一行都不用改。</p>
+<p>一个请求变成了具体的命令对象，就可以方便地给它添加：</p>
+<ul>
+<li>
+<p><strong>日志记录：</strong> 在 <code>execute</code> 里加个打印或者记录。</p>
+</li>
+<li>
+<p><strong>排队机制：</strong> 把 <code>Command</code> 对象存进 <code>Array</code>，依次 <code>execute()</code>。</p>
+</li>
+<li>
+<p><strong>撤销功能：</strong> 给 <code>Command</code> 接口加一个 <code>undo()</code> 方法，记录上一个命令对象，点击撤销时执行 <code>undo()</code>。</p>
+</li>
+</ul>
+<p>这里的关键在于，在真正的复杂的业务里，一个<code>command</code>所携带的操作需要的数据可能需要由<code>Invoker</code>传入。所以<code>Invoker</code>必须知道对应的数据才行。这是一个巨大的雷点，无数项目都没避开，处理不好就会让<code>Invoker</code>成为上帝（掌管一切，全知全能）类。</p>
+<p>这里有几种解决方法：</p>
+<ul>
+<li>依赖注入：不要让 <code>Invoker</code> 去“持有”数据，而是让 <code>Command</code> 在初始化时就注入好数据，让<code>Invoker</code> 只负责维护 <code>Command</code> 队列。</li>
+<li>闭包： <code>Invoker</code> 执行时，通过某种上下文或回调函数获取运行时数据。</li>
+<li>使用<code>Mediator</code>模式：见下文。</li>
+</ul>
+<h3 id="现代写法-1"><a class="header" href="#现代写法-1">现代写法</a></h3>
+<p>在现代语言中，函数本身就是一等公民函数，闭包本质上可以看成是<strong>不需要显式实现接口的命令对象</strong>。</p>
+<p>我们不再通过 <code>Invoker</code> 调用，而是将闭包塞进任务队列。例如nodejs的<code>nextTick</code>，或者浏览器环境下的 <code>requestIdleCallback</code>。它们把要执行的动作封装成任务对象，放入队列等待系统调度。</p>
+<p><code>Redux/Vuex</code> 的<code>Actions</code>也是经典的命令模式，你的每一个 <code>dispatch({ type: 'ADD', payload: 1 })</code> 就是一个典型的命令。它把动作序列化了，才使得可以进行撤销与重做。</p>
+<h3 id="回顾思考-1"><a class="header" href="#回顾思考-1">回顾思考</a></h3>
+<p>在现代，函数式编程和闭包很大程度上代替了一部分命令模式的职责。</p>
+<p>但是，对于重度需要撤销与重做的应用（比如vscode），往往还是严格遵循OOP中的命令模式，这是因为因为撤销逻辑往往非常复杂，需要维护大量的状态快照，而闭包往往承受不了这种复杂的要求。</p>
+<p>不过，命令模式的最大缺点正如之前说的，<code>Invoker</code>非常容易变成上帝类，导致代码混乱。</p>
+<h2 id="3-interpreter"><a class="header" href="#3-interpreter">3: Interpreter</a></h2>
+<h3 id="一句话总结-2"><a class="header" href="#一句话总结-2">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**编译器限定，主要是关于如何解析抽象语法树，应该定义为一种编译器技术，不建议作为一种设计模式，因为不具备普适性。</p>
+</li>
+<li>
+<p><strong>优点：</strong>——</p>
+</li>
+</ul>
+<h3 id="回顾思考-2"><a class="header" href="#回顾思考-2">回顾思考</a></h3>
+<p>在业务代码中不应该使用，否则一年也写不完代码了，属于是编译器领域才会用到的特色设计。</p>
+<h2 id="4-iterator"><a class="header" href="#4-iterator">4: Iterator</a></h2>
+<h3 id="一句话总结-3"><a class="header" href="#一句话总结-3">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**一种不需要知道对象内部结构前提下，也能访问对象内部的方法。</p>
+</li>
+<li>
+<p>**优点：**解耦外部访问者和对象内部的关系，使外部代码不需要知道对象的内部结构。</p>
+</li>
+</ul>
+<h3 id="回顾思考-3"><a class="header" href="#回顾思考-3">回顾思考</a></h3>
+<p>现代几乎所有的编程语言中，都变成了内置的<code>Iterator</code>。基本已被弃用。</p>
+<h2 id="5-mediator"><a class="header" href="#5-mediator">5: Mediator</a></h2>
+<h3 id="一句话总结-4"><a class="header" href="#一句话总结-4">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**使用一个中间对象来和其他对象交互，让其他对象之间不需要直接引用，只需要知道中介对象即可。（和现实里的中介一模一样）</p>
+</li>
+<li>
+<p>**优点：**解耦对象与对象之间的直接引用。</p>
+</li>
+</ul>
+<h3 id="oop写法-2"><a class="header" href="#oop写法-2">OOP写法</a></h3>
+<p>每个对象的引用需要持有一个中介的引用，当自己变化时通知中介，这些对象可以继承一个<code>Colleague</code>基类。</p>
+<p>然后中介变成了一个巨大无比的，而且还需要手动维护的调度中心，根据自己被其他对象调用的情况来判断应该怎么做。</p>
+<pre><code class="language-ts">// 中介者接口
+interface Mediator {
+    notify(sender: Colleague, event: string): void;
+}
+
+// 同事类基类
+abstract class Colleague {
+    constructor(protected mediator: Mediator) {}
+}
+
+// 具体同事类：只负责通知中介者
+class UserA extends Colleague {
+    doAction() {
+        console.log("UserA 完成了操作");
+        this.mediator.notify(this, "A_COMPLETED");
+    }
+}
+
+class UserB extends Colleague {
+    react() {
+        console.log("UserB 收到指令，开始行动");
+    }
+}
+
+// 具体中介者：持有所有同事的引用，负责逻辑流转
+class ConcreteMediator implements Mediator {
+    private userA?: UserA;
+    private userB?: UserB;
+
+    setUsers(a: UserA, b: UserB) {
+        this.userA = a;
+        this.userB = b;
+    }
+
+    notify(sender: Colleague, event: string) {
+        if (event === "A_COMPLETED") {
+            this.userB?.react(); // 中介者在这里处理复杂的交互逻辑
+        }
+    }
+}
+</code></pre>
+<h3 id="回顾思考-4"><a class="header" href="#回顾思考-4">回顾思考</a></h3>
+<p>它是星型拓扑的结构。解决了随着业务越来越大，每个对象都要知道其他对象才能调用的问题。但随之而来的问题是，这个中介需要知道其他的所有对象，因此他也一样极其变成上帝类。</p>
+<p>不建议使用。现代人更喜欢 Event Bus。</p>
+<h2 id="6-memento"><a class="header" href="#6-memento">6: Memento</a></h2>
+<h3 id="一句话总结-5"><a class="header" href="#一句话总结-5">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**在不破坏封装的前提下，使用一个对象存储另一个对象的状态，以便后续恢复。</p>
+</li>
+<li>
+<p>**优点：**主要目的是为了撤销和重做。</p>
+</li>
+</ul>
+<h3 id="oop写法-3"><a class="header" href="#oop写法-3">OOP写法</a></h3>
+<p>备忘录模式需要三个核心角色：</p>
+<ul>
+<li>
+<p><strong>Originator（发起人）：</strong> 需要保存状态的对象。它负责创建备忘录，并使用备忘录恢复状态。</p>
+</li>
+<li>
+<p><strong>Memento（备忘录）：</strong> 存储 Originator 内部状态的对象。</p>
+</li>
+<li>
+<p><strong>Caretaker（负责人/管理员）：</strong> 负责保管备忘录，但不能对备忘录的内容进行操作或检查。它只负责在需要时（如撤销操作）将备忘录归还给 Originator。</p>
+</li>
+</ul>
+<pre><code class="language-ts">// 备忘录：存储状态
+class Memento {
+    constructor(private state: string) {}
+    getState(): string { return this.state; }
+}
+
+// 发起人：状态的拥有者
+class Editor {
+    private state: string = "";
+
+    setState(state: string) { this.state = state; }
+    
+    // 创建备忘录
+    save(): Memento { return new Memento(this.state); }
+    
+    // 恢复状态
+    restore(memento: Memento) { this.state = memento.getState(); }
+}
+
+// 负责人：保管备忘录
+class History {
+    private history: Memento[] = [];
+    
+    push(memento: Memento) { this.history.push(memento); }
+    pop(): Memento | undefined { return this.history.pop(); }
+}
+</code></pre>
+<h3 id="现代写法-2"><a class="header" href="#现代写法-2">现代写法</a></h3>
+<p>在现代这种模式已经演化出了更多更完善的模式。</p>
+<p>第一种方式，直接将对象转为 JSON 或二进制流，然后存入数据库或内存缓冲区，而不是创建一个专门的 <code>Memento</code> 类。数据库事务里大量应用了这种<code>Memento</code>模式的变种思想，通常被称为<code>MVCC</code>（多版本并发控制）。数据库中以行数据或数据页为单位，将数据被分在磁盘和内存中，每修改一次就标记不同的版本号并且允许多个版本号并行共存。</p>
+<p>虽然其实更严格来说，<code>MVCC</code>要比简单的<code>Memento</code>模式复杂的多，甚至是数据库设计的核心难题之一（因为数据库还涉及并发控制和事务）。但是不严谨的讲，可以认为<code>MVCC</code>继承了<code>Memento</code>的核心血脉。</p>
+<hr>
+<p>第二种方式，在React/Redux架构中，通过“创建新状态”来代替“修改旧状态”。每次修改都生成一个新的State对象，通过这种方式天然实现撤销，其本质上其实可以认为是一种“差量的<code>Memento</code>”。</p>
+<p>经典 Memento 通常是“全量”的，每次都备份一整个完整的<code>Memento</code>对象，而<code>Redux/Immutable.js</code>通过结构共享（只替换被修改的节点，未修改的节点直接引用旧对象指针），实现极低开销的差量存储，但代价是控制版本的代码复杂程度指数级飙升。（其实更严格来说，在现代前端中，Memento 的终极形态不是全量备份，也不是复杂的差量，而是借由不可变数据带来的“零成本引用快照”。因为数据不可变，每次修改都是生成新指针，旧指针天然就是历史快照，把Memento变成了纯粹的历史指针数组。）</p>
+<h3 id="回顾思考-5"><a class="header" href="#回顾思考-5">回顾思考</a></h3>
+<p><code>Memento</code>这种模式在传统的OOP里过于死板，因为每次都要保存一整个<code>Memento</code>对象，因此很容易导致内存问题。</p>
+<p>但这并不是说这种模式的核心思想不正确，不然数据库也不可能采用这种模式的现代版本了。现代的演化往往都主要集中在“怎么更好的存储这些变化的状态”问题上。解决好这个问题，<code>Memento</code>还是非常有用而且要比<code>Command</code>模式方便得多的一种实现撤销/重做的设计模式。</p>
+<h2 id="7-observer"><a class="header" href="#7-observer">7: Observer</a></h2>
+<h3 id="一句话总结-6"><a class="header" href="#一句话总结-6">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**当对象之间的关系为一对多时，改变其中的“一”时，让“多”能够感知并自动响应变化。</p>
+</li>
+<li>
+<p>**优点：**解耦类之间的调用耦合。</p>
+</li>
+</ul>
+<h3 id="oop写法-4"><a class="header" href="#oop写法-4">OOP写法</a></h3>
+<p>观察者模式由 <strong>Subject（被观察者）</strong> 和 <strong>Observer（观察者）</strong> 组成。</p>
+<ul>
+<li><strong>Subject:</strong> 维护观察者列表，提供注册/删除方法，状态变更时触发通知。</li>
+<li><strong>Observer:</strong> 定义一个更新接口，确保在 <code>Subject</code> 变化时能得到回调。</li>
+</ul>
+<p>按照二者之间数据传输层次来看，又可以分为推模式与拉模式。</p>
+<p>在推模式下，<code>Subject</code>在状态变化时，主动将状态作为参数传给<code>Observer</code>。</p>
+<p>优点是<code>Subject</code>不用查询，拿到数据直接用。缺点则是<code>Observer</code>必须了解<code>Subject</code>传递的参数结构。</p>
+<pre><code class="language-ts">// 抽象接口
+interface Observer { update(data: any): void; }
+interface Subject { attach(o: Observer): void; notify(): void; }
+
+// 被观察者
+class ConcreteSubject implements Subject {
+    private observers: Observer[] = [];
+    private state: string = "";
+
+    attach(o: Observer) { this.observers.push(o); }
+    
+    setState(state: string) {
+        this.state = state;
+        this.notify(); // 触发通知
+    }
+
+    notify() {
+        // 推模式：直接把 state 推送过去
+        for (const o of this.observers) o.update(this.state);
+    }
+}
+
+// 观察者
+class ConcreteObserver implements Observer {
+    update(data: any) { console.log("收到数据:", data); }
+}
+</code></pre>
+<p>在拉模式下，<code>Subject</code>只通知<code>Observer</code>自己变化了，<code>Observer</code>需要自己去问<code>Subject</code>要数据。</p>
+<p>优点是<code>Observer</code>只需知道<code>Subject</code>的引用，按需调用接口，可以根据自身逻辑选择是否获取、获取多少。在系统更加复杂时，拉模式显然是更好的选择，因为<code>Observer</code>知道的越少，耦合度就越低。</p>
+<pre><code class="language-ts">// 观察者接口
+interface Observer {
+    update(subject: Subject): void; // 可以传入 Subject 引用，而非直接数据
+}
+
+// 被观察者接口
+interface Subject {
+    attach(o: Observer): void;
+    getState(): string; // 暴露出获取数据的接口
+    notify(): void;
+}
+
+// 具体被观察者
+class WeatherStation implements Subject {
+    private observers: Observer[] = [];
+    private temperature: string = "25°C"; // 内部状态
+
+    attach(o: Observer) { this.observers.push(o); }
+
+    getState() { return this.temperature; } // 观察者自己来“拉”
+
+    setTemperature(temp: string) {
+        this.temperature = temp;
+        this.notify();
+    }
+
+    notify() {
+        // 推模式里这里会传参数，拉模式这里只传 this
+        for (const o of this.observers) o.update(this);
+    }
+}
+
+// 具体观察者
+class PhoneDisplay implements Observer {
+    update(subject: Subject) {
+        // 这里体现了“拉”：观察者主动调用 getState()
+        const data = subject.getState(); 
+        console.log(`手机显示更新: ${data}`);
+    }
+}
+</code></pre>
+<h3 id="回顾思考-6"><a class="header" href="#回顾思考-6">回顾思考</a></h3>
+<p>在现代，<code>Observer</code>模式是所有设计模式中进化最彻底的一个，它已经演变成了现代分布式系统、响应式编程和事件驱动架构的基础设施，而不仅仅是一个简单的一对多自动通知模式。例如<code>Vue</code>的核心，就是使用<code>Proxy</code>来在数据变化时通知每个应该变化的组件去重新渲染自己。浏览器的各种点击、鼠标事件，本质上也是一种推模式的<code>Observer</code>。</p>
+<h2 id="8-state"><a class="header" href="#8-state">8: State</a></h2>
+<h3 id="一句话总结-7"><a class="header" href="#一句话总结-7">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**将状态表示为对象，State模式就是状态机的OOP实现。</p>
+</li>
+<li>
+<p>**优点：**解决状态复杂时if-else的深层嵌套和爆炸问题，将状态变换从业务中剥离。</p>
+</li>
+</ul>
+<h3 id="oop写法-5"><a class="header" href="#oop写法-5">OOP写法</a></h3>
+<p>关键是需要一个负责记录和切换状态的<code>Context</code>类。这时候不需要 <code>if-else</code>只需要无限调用 <code>brain.request()</code>，内部的黑盒就会自动轮转。这就是状态机的最简骨架。</p>
+<pre><code class="language-ts">// 定义状态行为接口
+interface State {
+    handle(ctx: Context): void;
+}
+
+// 环境类：只负责持有状态、提供切换状态的方法
+class Context {
+    constructor(public state: State) {} // 注入初始状态
+    
+    request() {
+        this.state.handle(this); // 把自己传给状态类，供其切换
+    }
+}
+
+// 具体状态 A
+class StateA implements State {
+    handle(ctx: Context) {
+        console.log("当前是 A 状态 -&gt; 自动切换到 B");
+        ctx.state = new StateB(); // 直接通过属性赋值切换
+    }
+}
+
+// 具体状态 B
+class StateB implements State {
+    handle(ctx: Context) {
+        console.log("当前是 B 状态 -&gt; 自动切换到 A");
+        ctx.state = new StateA();
+    }
+}
+
+// --- 使用用例 ---
+const brain = new Context(new StateA());
+brain.request(); // 输出: 当前是 A 状态 -&gt; 自动切换到 B
+brain.request(); // 输出: 当前是 B 状态 -&gt; 自动切换到 A
+brain.request(); // 输出: 当前是 A 状态 -&gt; 自动切换到 B
+</code></pre>
+<h3 id="现代写法-3"><a class="header" href="#现代写法-3">现代写法</a></h3>
+<p>在现代语言的代数数据类型与模式匹配的强大工具下，不需要像OOP那样在使用复杂的继承。甚至连状态的数据都可以不再放到<code>Context</code>中，而且还有完整的类型安全。</p>
+<pre class="playground"><code class="language-rust">// 代数数据类型 (ADT)：状态本身可以携带各自特有的数据
+enum State {
+    Unpaid,
+    Paid { receipt_id: String }, // 已支付状态，自带收据 ID
+    Shipped,
+}
+
+// 环境(Context)
+struct Order {
+    state: State,
+}
+
+impl Order {
+    fn new() -&gt; Self {
+        Order { state: State::Unpaid }
+    }
+
+    // 模式匹配，match统一处理所有状态流转
+    fn progress(&amp;mut self) {
+        self.state = match &amp;self.state {
+            State::Unpaid =&gt; {
+                println!("未支付 -&gt; 支付成功！");
+                State::Paid { receipt_id: "REC-1024".to_string() }
+            }
+            State::Paid { receipt_id } =&gt; {
+                println!("已支付 (单号: {}) -&gt; 已发货！", receipt_id);
+                State::Shipped
+            }
+            State::Shipped =&gt; {
+                println!("已发货 -&gt; 流程已终结，无后续状态。");
+                State::Shipped // 保持原样
+            }
+        };
+    }
+}
+
+fn main() {
+    let mut order = Order::new();
+
+    order.progress(); // 输出: 未支付 -&gt; 支付成功！
+    order.progress(); // 输出: 已支付 (单号: REC-1024) -&gt; 已发货！
+    order.progress(); // 输出: 已发货 -&gt; 流程已终结，无后续状态。
+}</code></pre>
+<h3 id="回顾思考-7"><a class="header" href="#回顾思考-7">回顾思考</a></h3>
+<p>现代语言的代数数据类型和模式匹配工具完胜了经典OOP状态模式。带来了三个OOP下根本做不到的巨大优势：</p>
+<ul>
+<li>
+<p><strong>无类爆炸：</strong> 经典模式下你要写1个接口+n个状态类。Rust 里只需要<strong>一个 <code>enum</code></strong> 搞定所有状态的定义。</p>
+</li>
+<li>
+<p><strong>类型安全：</strong> 在OOP中，如果“已支付”状态需要一个收据ID，你得在基类里想办法兼容，或者搞恶心的类型强转。而 Rust 的 <code>enum</code>（和 TS 的联合类型）天然允许<strong>不同状态绑定不同的数据结构</strong>。只有切换到 <code>Paid</code> 状态时，对应的数据才是可访问的。</p>
+</li>
+</ul>
+<ul>
+<li><strong>编译器穷举检查：</strong> 如果你以后给 <code>enum State</code> 增加了一个 <code>Refunded</code>（已退款）状态，Rust编译器会<strong>直接报错</strong>，强迫你在 <code>match</code> 里必须处理这个新状态。在OOP里，你漏写了一个状态类，只会出现神奇的Bug。</li>
+</ul>
+<h2 id="9-strategy"><a class="header" href="#9-strategy">9: Strategy</a></h2>
+<h3 id="一句话总结-8"><a class="header" href="#一句话总结-8">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**把算法封装成对象，让调用方可在不更改源代码的情况下切换使用的算法。</p>
+</li>
+<li>
+<p>**优点：**解耦了算法的实现与调用，使算法可以独立与其他部分代码存在和演化。</p>
+</li>
+</ul>
+<h3 id="oop写法-6"><a class="header" href="#oop写法-6">OOP写法</a></h3>
+<p>非常简单，其实本质上，如果把当前选择的算法也看作系统的一种状态，那么<code>Strategy</code>模式其实可以被包含在<code>State</code>模式之中。甚至可以说，<code>Strategy</code> 模式是 <code>State</code> 模式的一种特例。因此下面的代码看着和<code>State</code>模式非常像。</p>
+<pre><code class="language-ts">// 抽象策略
+interface PaymentStrategy {
+    calculateFee(amount: number): number;
+}
+
+// 具体策略 A：微信支付
+class WeChatPayStrategy implements PaymentStrategy {
+    calculateFee(amount: number): number { return amount * 0.01; } // 1% 手续费
+}
+
+// 具体策略 B：支付宝
+class AliPayStrategy implements PaymentStrategy {
+    calculateFee(amount: number): number { return amount * 0.005; } // 0.5% 手续费
+}
+
+// 环境类：负责调用策略
+class OrderContext {
+    private strategy: PaymentStrategy;
+
+    constructor(strategy: PaymentStrategy) {
+        this.strategy = strategy; // 注入具体策略
+    }
+
+    // 动态更换策略
+    setStrategy(strategy: PaymentStrategy) {
+        this.strategy = strategy;
+    }
+
+    execute(amount: number) {
+        const fee = this.strategy.calculateFee(amount);
+        console.log(`应付手续费: ${fee}`);
+    }
+}
+
+// --- 使用用例 ---
+const order = new OrderContext(new WeChatPayStrategy());
+order.execute(100); // 微信支付处理
+
+order.setStrategy(new AliPayStrategy());
+order.execute(100); // 动态切换为支付宝处理
+</code></pre>
+<h3 id="现代写法-4"><a class="header" href="#现代写法-4">现代写法</a></h3>
+<p>在现代语言中，简单的算法往往都被<code>Lambda</code>函数解决了。而在以前，比如Java中，要实现这样的功能必须强行把函数打包成一个对象，导致为了传一个只有一行的逻辑，你不得不写一堆外壳，而现代函数式语言已经解决了这个问题。</p>
+<pre class="playground"><code class="language-rust">fn main() {
+    // 定义两个简单的 Lambda 函数（闭包）
+    let add_one = |x| x + 1;
+    let multiply_by_two = |x| x * 2;
+
+    // 将 Lambda 函数作为“资源”赋值给变量
+    let mut strategy = add_one;
+    println!("执行策略 1: {}", strategy(5)); // 输出: 6
+
+    // 动态替换为另一个 Lambda 函数
+    strategy = multiply_by_two;
+    println!("执行策略 2: {}", strategy(5)); // 输出: 10
+}</code></pre>
+<p>对于复杂的算法，往往还是需要包装成一些独立的模块和函数，但是也不再需要写一大堆条条框框的模板，只需要利用简单的状态机即可，多亏了现代函数式语言里函数已经成为了一等公民。</p>
+<h3 id="回顾思考-8"><a class="header" href="#回顾思考-8">回顾思考</a></h3>
+<p>Strategy是空间维度的展开，多个并行的算法资源来回切换。</p>
+<p>State是时间维度的展开，多个状态按时间线来回切换。</p>
+<p>算法其实就是一种特殊的静态状态资源。在现代支持高阶函数和ADT的语言中，无需过度纠结其概念分类。</p>
+<h2 id="10-template-method"><a class="header" href="#10-template-method">10: Template Method</a></h2>
+<h3 id="一句话总结-9"><a class="header" href="#一句话总结-9">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**在父类中定义一个算法的骨架，而将一些步骤延迟到子类中实现。</p>
+</li>
+<li>
+<p>**优点：**其实就是继承的基本技巧。</p>
+</li>
+</ul>
+<h3 id="现代写法-5"><a class="header" href="#现代写法-5">现代写法</a></h3>
+<p>现代写法消灭模板方法，连高级的语言特性都不需要，最常用的有两种方案：</p>
+<p>方案一：直接用Strategy模式替代。不要让子类去继承父类，而是把可变的部分做成策略插件注入进来。（如前所讲）</p>
+<p>方案二：高阶函数 / 中间件模式。你想在核心逻辑前后加点什么，加个中间件就行了，根本不需要去动别的代码。</p>
+<h3 id="回顾思考-9"><a class="header" href="#回顾思考-9">回顾思考</a></h3>
+<p>该模式在现代基本已经被判死刑，无需也不应该再使用。</p>
+<p>归根到底，这种方法最可恶的问题是导致程序员代码阅读心智负担极大，因为非常容易导致阅读代码时控制流混乱，在子类和父类之间来回跑。这是一种典型的OOP遗物，在现代应该被舍弃。</p>
+<h2 id="11-visitor"><a class="header" href="#11-visitor">11: Visitor</a></h2>
+<h3 id="一句话总结-10"><a class="header" href="#一句话总结-10">一句话总结</a></h3>
+<ul>
+<li>
+<p>**本质：**解决在不改变数据结构的前提下，动态增加新功能的问题。</p>
+</li>
+<li>
+<p>**优点：**极强的扩展性，打破继承的局限，支持“双分派”。</p>
+</li>
+</ul>
+<h3 id="oop写法-7"><a class="header" href="#oop写法-7">OOP写法</a></h3>
+<p>在传统的OOP观念中，我们强调内聚，把数据和操作数据的行为写在同一个类里。 而 Visitor 模式的本质，则是反其道而行之的解耦，他把对象拆分成两个部分：</p>
+<ul>
+<li>
+<p><strong>元素类（Element）：</strong> 变成纯粹的“数据容器”，只负责保存数据结构，不包含任何复杂的业务逻辑。</p>
+</li>
+<li>
+<p><strong>访问者类（Visitor）：</strong> 变成了“行为仓库”，所有的业务逻辑、计算规则、导出功能，全部分流到各个具体的Visitor中。</p>
+</li>
+</ul>
+<pre><code class="language-ts">// 访问者接口
+interface Visitor {
+    visitCircle(circle: Circle): void;
+    visitSquare(square: Square): void;
+}
+
+// 被访问的元素接口
+interface Shape {
+    accept(visitor: Visitor): void; // 核心：接受访问者
+}
+
+// 具体元素
+class Circle implements Shape {
+    accept(visitor: Visitor) { 
+        // 第一次分派：运行时决定调用哪个 Visitor 的方法
+        // 第二次分派：把 this（Circle 类型）传过去，决定调用 visitCircle
+        visitor.visitCircle(this); 
+    }
+}
+class Square implements Shape {
+    accept(visitor: Visitor) { visitor.visitSquare(this); }
+}
+
+// 具体访问者：具体的业务逻辑全在这里
+class ExportSvgVisitor implements Visitor {
+    visitCircle(circle: Circle) { console.log("导出圆形为 SVG"); }
+    visitSquare(square: Square) { console.log("导出方形为 SVG"); }
+}
+
+// 具体使用
+const shapes: Shape[] = [new Circle(), new Square()];
+const svgVisitor = new ExportSvgVisitor();
+
+for (const shape of shapes) {
+    shape.accept(svgVisitor); 
+}
+</code></pre>
+<h3 id="现代写法-6"><a class="header" href="#现代写法-6">现代写法</a></h3>
+<p>它和<code>Template Method</code>的悲惨命运不同。<code>Visitor</code> 模式的代码在现代依然大量存在，但它换了一种更高级的存在方式：模式匹配。</p>
+<pre class="playground"><code class="language-rust">// 定义数据结构 (代数数据类型)
+enum Shape {
+    Circle { radius: f64 },
+    Square { side: f64 },
+}
+
+// 独立出来的业务操作
+fn calculate_area(shape: &amp;Shape) -&gt; f64 {
+    // 使用 match 进行模式匹配，直接解构并提取数据
+    match shape {
+        Shape::Circle { radius } =&gt; std::f64::consts::PI * radius * radius,
+        Shape::Square { side } =&gt; side * side,
+    }
+}
+
+// 独立出来的业务操作 B
+fn export_to_svg(shape: &amp;Shape) {
+    match shape {
+        Shape::Circle { radius } =&gt; println!("&lt;circle r='{}' /&gt;", radius),
+        Shape::Square { side } =&gt; println!("&lt;rect width='{}' height='{}' /&gt;", side, side),
+    }
+}
+
+// --- 使用用例 ---
+fn main() {
+    // 准备一组数据结构列表
+    let shapes = vec![
+        Shape::Circle { radius: 5.0 },
+        Shape::Square { side: 10.0 },
+    ];
+
+    println!("--- 业务功能 1：计算面积 ---");
+    for shape in &amp;shapes {
+        println!("面积: {}", calculate_area(shape));
+    }
+
+    println!("\n--- 业务功能 2：导出 SVG (动态增加的新功能) ---");
+    for shape in &amp;shapes {
+        export_to_svg(shape);
+    }
+}</code></pre>
+<p>在编译器构建和处理AST时，利用代数数据类型和模式匹配，可以完美的解决AST的遍历和翻译问题。</p>
+<h3 id="回顾思考-10"><a class="header" href="#回顾思考-10">回顾思考</a></h3>
+<p>现代语言中<code>Visitor</code>模式没有死，但是也基本上也被更高阶的语法取代了。可见，行为模式里的<code>State</code>、<code>Strategy</code>、<code>Template Method</code>、<code>Visitor</code>模式，全都被代数数据类型和模式匹配杀死比赛了。因为本质上，这些模式就不应该存在，只是因为当时万物OOP的思想导致的设计补丁。</p>
+<p>其实换成另一种观点，把该模式推向极端，其实就可以看作<code>ECS</code>中的<code>System</code>。</p>
+<h2 id="补充发布与订阅"><a class="header" href="#补充发布与订阅">补充：发布与订阅</a></h2>
+<p>在之前我们说过，<code>Observer</code>模式是所有设计模式中进化最彻底的一个，在现代，他进化除了一个更高级的形态：Pub-Sub模式。</p>
+<p>那么我们就来看看，到底现在他到底已经演化为了什么。</p>
+<h3 id="分布式消息队列"><a class="header" href="#分布式消息队列">分布式消息队列</a></h3>
+<p>在分布式系统中，发布-订阅模式直接演化成了独立的基础设施中间件。以前的发布者和订阅者还在同一个进程的内存里。现在的发布者在一台电脑上的进程A，订阅者在远程电脑上的进程B，它们中间隔着一个庞大的服务器集群。</p>
+<p>在这种发布订阅里，引入了更多的概念：</p>
+<ul>
+<li>
+<p><strong>持久化：</strong> 消息不再是发出去就丢了，而是像数据库一样持久化在磁盘上，支持消息回溯。</p>
+</li>
+<li>
+<p><strong>高吞吐与削峰：</strong> 即使下游消费者挂了，上游依然可以疯狂发布消息，消息堆积在缓冲区里，实现了真正的时空解耦。</p>
+</li>
+</ul>
+<h3 id="物联网通讯协议mqtt"><a class="header" href="#物联网通讯协议mqtt">物联网通讯协议MQTT</a></h3>
+<p><code>MQTT</code>协议的底层，就是纯粹的、教科书级别的发布-订阅模式。在 <code>MQTT</code> 的世界里，发布者和订阅者互不相识，它们通过一个叫做<code>Broker</code>（消息代理/服务器）的中介来沟通。</p>
+<p>一个温度传感器，它会把数据发给 Broker，并贴上标签：<code>"home/livingroom/temperature"</code>，这个类似于<code>HTTP</code>中的<code>URL</code>，但在<code>MQTT</code>中被称为<code>Topic</code>。<code>Broker</code>看到这个<code>Topic</code>，就会检查谁订阅了这个<code>Topic</code>，然后把数据转发过去。如果你的手机<code>App</code>向<code>Broker</code>订阅了 <code>"home/livingroom/temperature"</code>，就能实时收到温度。</p>
+<h3 id="微服务与微前端"><a class="header" href="#微服务与微前端">微服务与微前端</a></h3>
+<p>微服务与微前端的架构核心，都高度依赖发布-订阅模式。</p>
+<p>在微服务中，如果服务之间全部使用 <code>HTTP</code> 或 <code>gRPC</code> 进行同步调用，微服务就会退化成一个屎山，因为只要一个服务挂了，整条链路崩溃。因此，现代微服务都通过分布式消息队列（如前所述）引入发布-订阅。</p>
+<p>微前端把一个巨大的前端单页应用拆成多个独立的子应用。它们由一个主应用负责调度。因为各个子应用运行在被沙箱里，它们不能直接调用对方的函数，这时就必须用发布-订阅。</p>
+<h3 id="事件驱动消息驱动"><a class="header" href="#事件驱动消息驱动">事件驱动/消息驱动</a></h3>
+<p>事件驱动经常和消息驱动被混为一谈，因为从表现上来看二者很像，但其实有一些细微的区别。</p>
+<p>事件驱动是拉的逻辑。事情发生了，接收方根据自己的职责去响应，自己从<code>Event</code>对象里找出来自己需要的数据。发送方只是在客观地宣告一件已经发生的事情，它完全不关心、也不知道谁会对此做出反应，所以一个事件是可以没有任何响应的（因为发送方不知道接收方需要什么，当然也就不需要也不能关心有没有人响应）。</p>
+<p>消息驱动是推的逻辑。发送方把任务推给接收方，接收方往往必须做，消息里往往含有接收方需要的准确数据。一条消息往往存在固定的消费者（这也能解释为什么分布式消息队列不叫做分布式事件队列了）。</p>
+<h2 id="结论行为型模式的新生"><a class="header" href="#结论行为型模式的新生">结论：行为型模式的新生</a></h2>
+<p>回顾十一个行为型模式，可以发现行为型模式和创造/结构模式的演化方向很不同。这些模式存在着明显的两极分化现象，要么被完全弃用，要么直接演变成了很多行业重要的基石直接发展出了更完善的形态。</p>
+<p>被完全弃用的那些模式，往往是因为当时OOP的设计缺陷导致的补丁。在现代已被更完善更强大的功能所取代了，自然也就不存在了。</p>
+<p>继续发展的那些模式，可以很明显的看出他们解决的并不是“在OOP下我们该怎么做”这样的问题，而是“怎么才能解耦A与B”这样的问题。这种本质属性，导致了他不会随着OOP的变化而变化，而是随着时代演变以不同的形式得到新的解决。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="结构型模式.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="总结.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="结构型模式.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="总结.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
