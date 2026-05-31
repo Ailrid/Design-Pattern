@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-017e7044.js";
+            window.path_to_searchindex_js = "searchindex-81cbd39a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-799a697f.js"></script>
@@ -271,6 +271,91 @@
 <li>**高阶函数复合：**传统OOP要实现功能的组合通常要让对象持有另一个对象的引用。而函数式编程的组合，是数学意义上的函数复合（<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span></span></span></span>）。一个函数能够接收函数作为参数，或者能够实现一个，返回函数的函数</li>
 </ul>
 <p>因此，你在设计模式中看到的，很多由于现代语言的改进而消灭的设计模式，其实更本质上，是现代函数式编程和<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span></span></span></span>演算对于图灵机的胜利。</p>
+<h3 id="不存在银弹"><a class="header" href="#不存在银弹">不存在银弹</a></h3>
+<p>软件开发中没有银弹。说完了函数式编程与OOP的爱恨情仇。赞扬了函数编程的有点，那么，函数式编程的缺点是什么？</p>
+<p>前面我们说到，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span></span></span></span>演算的核心就是<strong>变量代入</strong>与<strong>函数展开</strong>，而一个事物的核心假设与方法，是优点来源的同时，往往也是最大的缺点来源。</p>
+<p><strong>缺点一：闭包地狱</strong></p>
+<p>在<code>React</code>里有一个被无数人喷过的被叫做“闭包地狱”的大雷，由于闭包的特性，某个异步回调函数或副作用捕获了“过去”的状态，导致它在执行时拿到的依然是旧数据，而不是最新的值。为了引入函数式组件的副作用与缓存，React推出了 <code>useEffect</code>、<code>useCallback</code> 等等一堆API。然而搞笑的是，它们反而转接了代价，变成了闭包地狱最频繁的爆发区。</p>
+<p><strong>其本质，是闭包的状态捕获与异步并发之间的冲突。</strong></p>
+<p>而在更底层的语言里，这个问题变得更加致命。单单是所有权机制和异步就已经开始产生了排异反应。</p>
+<p>由于Rust 经常会发生所有权转移，把一个<code>Future</code>传给另一个线程、或者放进一个<code>Box</code>里。为了解决异步并发导致的内存移动产生空指针，Rust 引入了 <code>Pin</code>。<code>Pin&lt;P&gt;</code> 的本质是在内存中把这个对象“钉住”。一旦一个 <code>Future</code> 被 <code>Pin</code> 住了，Rust 就保证它再也不能在内存中被移动。这样，它内部的自引用指针就永远是安全的。</p>
+<p>Rust闭包与其他语言也不同，在Rust中闭包也有一个<code>move</code>关键字。在没有所有权的语言中，闭包对外部变量的捕获一般是全自动且悄无声息的，一律通过引用计数挂在堆上。但在 Rust 中，Rust 的闭包非常节约，能用借用就绝不用所有权。但如果你的闭包生命周期比它捕获的变量还要长，借用就会失效，导致编译报错，这时候你就必须在闭包前加上 <code>move</code>。</p>
+<p>而当Rust里的异步和闭包撞上，就会发生巨大的核反应。</p>
+<p>如果捕获的变量已经在外面的函数里被销毁（Drop）了，但异步任务还在另一个线程里哼哧哼哧地跑，这时候去访问那个变量，不就成了野指针吗？而Rust设计的目标就是根除空指针的存在，这可怎么办？</p>
+<p>为了让异步任务能安全运行，你必须使用<code>move</code>关键字。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let local_data = String::from("重要数据");
+// 加上 move！把 local_data 的所有权彻底剥夺，转移进异步任务内部
+tokio::spawn(async move {
+    // 此时这个数据完全属于这个异步任务了，它爱活多久活多久
+    println!("{}", local_data); 
+}); 
+<span class="boring">}</span></code></pre>
+<p>回到<code>React</code>闭包地狱的本质，其根源是同一个变量，外面在变，闭包里拿的是旧的，从而产生了冲突，React创造了<code>useEffect</code>。而Rust的<code>move</code>机制直接从物理上消灭了这种冲突的可能性。</p>
+<p>但代价就是，一旦被捕获，外面的世界就彻底失去它了。因此如果你既想把数据传给异步任务，又想让外面的代码继续用，该怎么办？只能拷贝。</p>
+<p><strong>这就是第一条代价：拷贝地狱。</strong></p>
+<p>更进一步，如果数据不仅要被多个异步任务共享，而且这些任务都想修改它，那你必须保证线程安全。</p>
+<p><strong>这就是第二条代价：<code>Arc&lt;Mutex&lt;T&gt;&gt;</code>地狱。</strong></p>
+<hr>
+<p><strong>缺点二：丧失的多态拓展性</strong></p>
+<p>代数数据类型与模式匹配很好的解决了绝大部分OOP继承需要的场景。唯独只有一条没有解决——扩展性。这在计算机科学中被称为“表达式问题”。</p>
+<p>以最典型的UI树为例。利用开放多态（继承），可以很好的描述一个UI的树结构，这已经在OOP中得到了大量的应用，我们不再赘述。</p>
+<p>在现代的闭合多态语言中，利用代数数据类型与接口，我们也可以实现同样的功能，因此可以写出这样的代码来描述一个树形结构。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 用代数类型穷尽节点的所有可能性（闭合多态）
+#[derive(Debug)]
+pub enum UIWidget {
+    Button { text: String },
+    Text { content: String },
+    Panel { children: Vec&lt;UIWidget&gt; },
+}
+
+impl UIWidget {
+    // 统一的行为方法，内部通过模式匹配（Pattern Matching）分发逻辑
+    pub fn draw(&amp;self) {
+        match self {
+            UIWidget::Button { text } =&gt; {
+                println!("  [渲染按钮]: {}", text);
+            }
+            UIWidget::Text { content } =&gt; {
+                println!("  [渲染文本]: {}", content);
+            }
+            UIWidget::Panel { children } =&gt; {
+                println!("[开始渲染面板] -&gt;");
+                // 一视同仁地向下递归遍历
+                for child in children {
+                    child.draw();
+                }
+                println!("&lt;- [面板渲染结束]");
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>但是——这里的关键是代数类型是一种封闭的多态，如果要添加新的UI组件，必须更改整个代数类型，这意味着，如果你在写一个<strong>通用 UI 框架</strong>，麻烦就大了。如果用户想自定义一个自己的组件并塞进框架的容器里，他们根本无法做到！因为他们没有权限去修改框架源码的<code>enum</code>类型，而且增加一个新的类型，意味着要大动干戈地修改原有的枚举定义，并且所有 <code>match</code> 它的地方全都要改一遍。这对框架设计来说是毁灭性的。</p>
+<p>有很多框架采用了一种讨巧的方式，比如SwiftUI或者Slint等，将修改结构后需要更改源代码的问题，交给了编译器来自动化工作，让你写起来感觉有开放多态的好处，但是实际上运行时却没有OOP的开销和问题。但这往往导致编译器报错出来的类型会嵌套几十层如同天数，同时也无法良好的支持热重载。</p>
+<p>而OOP是开放多态，从不假设数量。这就导致了一个天然的结果——<strong>OOP天然就是适合用来组建真正的UI树</strong>。很多UI框架早以证实了这一点，Flutter、早期的React（实际上React现在也是，虽然代码里不是，但是JS天生就是弱类型多态的，这只是一种不需要开放多态的幻觉，如果用纯粹、严格的函数式静态语言去写，就会立刻撞上这堵南墙），源代码里都是OOP。</p>
+<p>或许你有很多的方法仍然可以绕着来实现这样的开放多态，但是绝对不会优雅，最终你会发现自己绝对又结合类型擦除，重新实现了OOP中的虚表。</p>
+<p>或许有朝一日，如果我们能够用另一种继承之外的，更好的方式来实现开放多态，这个问题就能够解决了。</p>
+<p><strong>缺点三：复合地狱</strong></p>
+<p>最后一点则是函数式编程里臭名昭著的套娃地狱。例如Rust的迭代器不仅链条长，最致命的是Rust编译器的类型推导。这一长串下来，中间任何一步的借用或所有权搞错，编译器就会抛出一个长达两页纸的、夹杂着类似 <code>Filter&lt;Map&lt;Filter&lt;Iter&lt;...&gt;&gt;&gt;&gt;</code> 的超长泛型报错，直接把人看瞎。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let top_users: Vec&lt;String&gt; = users
+    .into_iter()
+    .filter(|u| u.age &gt;= 18)
+    .map(|u| u.name)
+    .filter(|name| !name.is_empty())
+    // 为了去重，得先收集到 HashSet，再转回迭代器（因为迭代器本身没有 dedup）
+    .collect::&lt;std::collections::HashSet&lt;_&gt;&gt;()
+    .into_iter()
+    .take(3)
+    .collect(); 
+// 哦等等，还要排序？迭代器没有 sort()，又得 collect 出来排，再处理……
+<span class="boring">}</span></code></pre>
+<p>正如人月神话里说的，软件开发中没有银弹。其实这句话放到编程语言里也是相同的。没有一种编程风格能够解决所有的设计问题。很多人误以为函数式编程比OOP更加优美，是因为他们只看到了高阶函数在字面上的简练。真正的函数式编程之所以敢如此自由传递和嵌套函数，是因为它强制要求函数是“纯”的。但我们在前端、在Rust、在Go里用的，大多是多范式语言而不是真正的纯粹的函数式语言。因此，硬币的另一面就是：自由的代价往往就是混乱。</p>
 <h3 id="补充"><a class="header" href="#补充">补充</a></h3>
 <p><code>Lisp</code>是第一门函数式编程语言。Lisp是世界上第二古老的高级语言（仅次于 Fortran），由人工智能之父约翰·麦卡锡（John McCarthy在1958年发明。他的特点是万物皆是列表，万物皆是函数。Lisp是现代所有动态语言（包括 JavaScript）的老祖宗。它是第一个引入闭包（Closure）、高阶函数、垃圾回收（GC）机制的语言。</p>
 <p><code>Haskhell</code>是一门把函数式编程发展到极致的编程语言。是为了实现“绝对纯粹的邱奇理想国”而打造的语言。它是以逻辑学家哈斯凯尔·柯里（Haskell Curry，柯里化Curry思想的提出者）的名字命名的。他的特点是，极端的纯粹与不可变，在 <code>Haskell</code> 里，“可变变量”这个概念是被彻底物理消灭的，它把 = 理解为数学上的等价定义，而不是图灵机的赋值。<code>Haskell</code> 引入了极其强大的静态强类型系统。之前在设计模式里感受到的代数数据类型和模式匹配，其现代工业界的终极源头就是<code>Haskell</code>。</p>
@@ -437,7 +522,7 @@ const IntList = List(i32); // 在编译期把 i32 类型传进去，直接生成
 <p>我们在前端创造了各种<code>DSL</code>语言，<code>JSX</code>也好<code>Vue</code>也罢， <code>JSX</code>和<code>Svelte</code>的编译器，本质上就是一个“语法翻译层面的元编程”。当你写下 <code>&lt;div/&gt;</code> 时，你不是在写<code>JS</code>，你是在写一种元编程语言。编译器这个最大的元编程程序，在构建阶段接管了你的代码，它把你的语义描述通过<code>AST</code>重写，转换成了指令式的、低层级的<code>DOM</code>操作，让你能够一行代码顶原来的十行代码。</p>
 <p>一个编译器的里程碑事件，就是让这个语言的编译器，也是用这个编程语言写出来的。在计算机里这叫做<strong>自举</strong>。这就是元编程的闭环。在这个闭环里，编程语言变成了一种能够自我复制、自我进化、自我增殖的生命体。</p>
 <p>但是，这种进化是永无休止的吗？</p>
-<p>显然，图灵和邱奇已经证明了，编译器不是万能的，不管如何进化，也不可能进化出理想的终点——能够解释万物终极真理判别器。</p>
+<p>显然，图灵和邱奇已经证明了，编译器不是万能的，不管如何进化，也不可能进化出理想的终点——能够解释万物终极真理判别器。那么，如果我们彻底超越编程与代码的边界，去看看那个真正孕育了计算机的母体呢？</p>
 <h2 id="话题超越编程"><a class="header" href="#话题超越编程">话题：超越编程</a></h2>
 <p>让我们把话题推向逻辑和理性终点，在编程之外，超越编程之外的世界是什么样的？</p>
 <p>让我们把视野拉的更高一些，当程序消失，当计算机消失，甚至连物理世界也消失，我们还剩下什么？</p>
@@ -500,7 +585,7 @@ const IntList = List(i32); // 在编译期把 i32 类型传进去，直接生成
 </ul>
 <p>但维特根斯坦说：命题 B 作为一句绝对正确的逻辑真理，它告诉你任何关于天气的新知识了吗？没有。它在物理上一文不值。</p>
 <p><strong>这就是我们写代码的真相。</strong></p>
-<p>我们在代码的世界里写下了成千上万行严密的逻辑推导，我们用泛型和控制流卡死了每一种可能。编译通过的那一刻，我们欢呼雀跃，觉得自己创造了真理。但维特根斯坦告诉我们：**你的代码什么也没有说，它只是一场宏大的、在编译期完成的‘同义反复’。**喂给编译器的输入，和编译器吐出来的输出，在逻辑的物理天平上，重量是完全相等的。<strong>逻辑没有创造任何新东西</strong>，它只是用一种绝对严密的符号游戏，保证了“输入”到“输出”的等价交换。逻辑的本质，就是一场绝对不会出错的、巨大的符号变换。</p>
+<p>我们在代码的世界里写下了成千上万行严密的逻辑推导，我们用泛型和控制流卡死了每一种可能。编译通过的那一刻，我们欢呼雀跃，觉得自己创造了真理。但维特根斯坦告诉我们：**你的代码什么也没有说，它只是一场宏大的、在编译期完成的“同义反复”。**喂给编译器的输入，和编译器吐出来的输出，在逻辑的物理天平上，重量是完全相等的。<strong>逻辑没有创造任何新东西</strong>，它只是用一种绝对严密的符号游戏，保证了“输入”到“输出”的等价交换。逻辑的本质，就是一场绝对不会出错的、巨大的符号变换。</p>
 <p>程序员们每天打交道的代码（<code>if-else</code>、变量名、类名），本质上就是这套玩了三百年的“符号脱水游戏”。用符号把沉重的现实业务脱水成轻量级的代码，在计算机里疯狂运算。</p>
 <h3 id="超越编程"><a class="header" href="#超越编程">超越编程</a></h3>
 <p>从莱布尼茨的通用语言，到罗素362页的符号圣战，再到维特根斯坦给世界布下的逻辑网格，人类用三百年的时间，把现实世界脱水成了纯粹的符号与逻辑。</p>
@@ -514,7 +599,7 @@ const IntList = List(i32); // 在编译期把 i32 类型传进去，直接生成
 <p><strong>对于不可言说之物，必须保持沉默</strong></p>
 </li>
 </ul>
-<p>符号和逻辑能捕获的，仅仅是那个被‘脱水’的事实世界。而超越编程之外的——那些关于生命的痛苦、美、爱、以及存在本身的意义，它们无法被写进 <code>if-else</code>，无法被封装进类与函数，它们属于那片“不可言说的领域”。</p>
+<p>符号和逻辑能捕获的，仅仅是那个被“脱水”的事实世界。而超越编程之外的——那些关于生命的痛苦、美、爱、以及存在本身的意义，它们无法被写进 <code>if-else</code>，无法被封装进类与函数，它们属于那片“不可言说的领域”。</p>
 <p>程序员们用尽一生的逻辑去编写程序，去穷尽这个符号世界的所有可能。而当我们终于合上电脑、抬起头，望向窗外真实、充满不确定性的复杂世界时，才会发现超越编程之外的，是那些代码无法触及的生命色彩，对于这些我们能做的，只有带着最深的敬畏，保持沉默。</p>
 
                     </main>
